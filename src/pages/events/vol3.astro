@@ -1,0 +1,95 @@
+---
+import MinimumLayout from "../../layouts/MinimumLayout.astro";
+import V3TopList from "../../components/v3/v3TopList.astro";
+import V3Statements from "../../components/v3/v3Statements.astro";
+
+
+import Container from "../../layouts/Container.astro";
+import ExternalLinks from "../../components/ExternalLinks.astro";
+import About from "../../components/About.astro";
+---
+
+<MinimumLayout
+    title="FLOW vol.3"
+    desc="FLOWの第3回。2024年12月4日に開催。"
+    favicon="/favicon.svg">
+
+    <main>
+
+    <section id="top" class="fullWid font-shan">
+        <p class="font-nijimi">オーディオビジュアルイベント / フロウ vol.3</p>
+        <h1>
+            <img src="https://placehold.jp/600x320.png" alt="">
+        </h1>
+        
+        <V3TopList upper="12/4.WED" lower="18:00~21:00"></V3TopList>
+        <V3TopList upper="at TERRACE GATE" lower="on Ritsumeikan Univ. OIC"></V3TopList>
+
+        <div>
+            <p>参加無料・予約不要・入退室自由</p>
+
+            <div>
+                <p class="font-nijimi">Produced by </p>
+                <img src="https://placehold.jp/80x40.png" alt="">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <Container>
+            <h2 class="text-justify text-xl">
+                Flowは<span class="text-2xl mx-1">「ひたる」</span>オーディオビジュアルイベントです。
+            </h2>
+
+            <div class="my-5 grid grid-cols-1 gap-5">
+                <V3Statements></V3Statements>
+            </div>
+        </Container>
+    </section>
+
+    <Container><hr></Container>
+
+    <section id="performers">
+        <Container>
+            <h2>Flow vol.3 出演者</h2>
+            <p>公開をお待ちください！</p>
+        </Container>
+    </section>
+
+    <Container><hr></Container>
+
+    <section id="externalLinks">
+        <Container>
+            <ExternalLinks></ExternalLinks>
+        </Container>
+    </section>
+
+    <Container><hr></Container>
+
+    <section id="about">
+        <Container>
+            <About></About>
+        </Container>
+    </section>
+
+    </main>
+</MinimumLayout>
+
+<style>
+    :root {
+        --bg: #1e1cd0;
+        --acc-light: #ffffff;
+        --txt-light: var(--acc-light)
+    }
+
+    html{
+        background-color: var(--bg);
+        font-family: 'MaboroshiNoNijimi', serif;
+
+        color: var(--txt-light);
+    }
+
+    hr{
+        margin: 30px 20px;
+    }
+</style>

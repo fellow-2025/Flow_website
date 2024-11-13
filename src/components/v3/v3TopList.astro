@@ -1,0 +1,13 @@
+--- 
+interface Props{
+    upper: string;
+    lower: string;
+}
+
+const { upper, lower } = Astro.props;
+---
+
+<ul>
+    <li class="text-3xl font-bold">{upper}</li>
+    <li class="text-lg">{lower}</li>
+</ul>
