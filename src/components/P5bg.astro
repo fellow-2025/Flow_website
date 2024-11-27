@@ -1,0 +1,221 @@
+<div id="p5Parent"></div>
+
+<script>
+    const parent = document.getElementById('p5Parent')
+
+    import p5 from 'p5'
+
+    const ease = (x: number): number => {
+        return 1 - Math.sqrt(1 - Math.pow(x, 2))
+    }
+
+    const grainCount = 1000
+
+    const rndSource: number[] = new Array(grainCount).fill(0).map(_ => ease(Math.random()))
+
+    let grainRadius = 250
+    let grainVariance = 90
+
+    const fadeLen = 75
+
+    let img: p5.Graphics
+
+    const sketch = (p: p5) => {
+        p.setup = () => {
+            p.createCanvas(1,1)
+
+            resizeSquare()
+            bringCanvasCenter()
+
+            drawPoints()
+            // drawFlow()
+        };
+
+        p.draw = () => {
+            p.clear()
+
+            if(p.frameCount < fadeLen){
+                const elp = p.frameCount / fadeLen
+                const eased = easeInOutQuint(elp)
+                p.tint(255, 255 * eased)
+            }else{
+                p.tint(255, 255)
+            }
+            
+            p.image(img, 0, 0, p.width, p.height)
+        }
+
+        // from easings.net. thanks.
+        function easeInOutQuint(x: number): number {
+            return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2;
+        }
+
+        p.windowResized = () => {
+            resizeSquare()
+        }
+
+        const resizeSquare = () => {
+            const w = window.innerWidth
+            const h = window.innerHeight
+            const s = w < h ? w : h
+
+            p.resizeCanvas(s, s);
+        }
+
+        const bringCanvasCenter = () => {
+            const w = window.innerWidth
+            const h = window.innerHeight
+            
+            // percentage
+            const s = (w < h ? h-w : w-h) / 2
+
+            const canvParent = document.getElementById('p5Parent')
+            if (!canvParent) return
+
+            if (w > h){
+                canvParent.style.top = '0'
+                canvParent.style.left = `${s}px`
+            }else{
+                canvParent.style.top = `${s}px`
+                canvParent.style.left = '0'
+            }
+        }
+
+        type v2 = {x: number, y: number}
+
+        const drawFlow = async () => {
+            img = p.createGraphics(p.width, p.height)
+
+            img.stroke(img.color("200, 200, 200"))
+            img.strokeWeight(1)
+
+            const seed = Math.random() * Number.MAX_SAFE_INTEGER
+            p.noiseSeed(seed)
+
+            const res = 3
+            const ff: number[] = new Array(res * res).fill(0)
+                .map((e,i)=> p.noise(i%res, Math.floor(i/res))) // perlin-handled angle
+
+            const batch = 10
+            const nPars = 100
+            const unitLen = 10
+
+            for (let b = 0; b < batch; b++) {
+                const pos = {x: Math.random() * p.width, y: Math.random() * p.height}
+                // console.log(pos)
+
+                for (let p = 0; p < nPars; p++){
+                    const ang = lookup(ff, res, pos)
+
+                    const np = wrap({
+                        x: pos.x + Math.cos(ang) * unitLen,
+                        y: pos.y + Math.sin(ang) * unitLen
+                    })
+
+                    pos.x = np.x
+                    pos.y = np.y
+
+                    // img.point(pos.x, pos.y)
+                    console.log(pos)
+                    img.point(pos.x, pos.y)
+                }
+            }
+        }
+
+        const wrap = (coord: v2): v2 => {
+            const wx = coord.x % p.width
+            const wy = coord.y % p.height
+
+            return {x: wx, y: wy}
+        }
+
+        const lookup = (ff: number[], res: number, coord: v2): number => {
+            // 座標を0-1の範囲に正規化
+            const x = coord.x / p.width;
+            const y = coord.y / p.height;
+
+            // 4つの最近傍グリッドポイントのインデックスを計算
+            const x0 = Math.floor(x * (res - 1));
+            const y0 = Math.floor(y * (res - 1));
+            const x1 = (x0 + 1) % res;
+            const y1 = (y0 + 1) % res;
+
+            // 4つの最近傍点のインデックスを計算
+            const idx00 = y0 * res + x0;
+            const idx01 = y0 * res + x1;
+            const idx10 = y1 * res + x0;
+            const idx11 = y1 * res + x1;
+
+            // バイリニア補間のための重み計算
+            const wx = (x * (res - 1)) - x0;
+            const wy = (y * (res - 1)) - y0;
+
+            // 4点の値を取得
+            const v00 = ff[idx00];
+            const v01 = ff[idx01];
+            const v10 = ff[idx10];
+            const v11 = ff[idx11];
+
+            // バイリニア補間
+            const vx0 = v00 * (1 - wx) + v01 * wx;
+            const vx1 = v10 * (1 - wx) + v11 * wx;
+            const v = vx0 * (1 - wy) + vx1 * wy;
+
+            return v;
+        }
+
+        const drawPoints = () => {
+            grainRadius = p.width > p.height ? p.width / 2 * .6 : p.height / 2 * .6
+
+            img = p.createGraphics(p.width, p.height)
+
+            img.stroke(img.color("200, 200, 200"))
+            img.strokeWeight(1)
+
+            img.push()
+            img.translate(img.width / 2, img.height / 2)
+            const wPerH = img.width / img.height
+            img.scale(wPerH, 1)
+
+            const unit = img.TWO_PI / rndSource.length
+            rndSource.forEach((e, idx) => {
+                img.point(
+                    Math.cos(unit * idx) * (grainRadius + e * grainVariance),
+                    Math.sin(unit * idx) * (grainRadius + e * grainVariance)
+                )
+
+                img.point(
+                    Math.cos(unit * idx) * (grainRadius - e * grainVariance),
+                    Math.sin(unit * idx) * (grainRadius - e * grainVariance)
+                )
+            })
+
+            img.pop()
+
+            for (let i = 0; i < 5; i++) {
+                img.push()
+                    img.translate(img.width / 2, img.height / 2)
+                    img.rotate(p.TWO_PI / 5 * i)
+                    img.scale(.95 + (p.random() * .1))
+
+                    img.image(img, -img.width/2, -img.height/2, img.width, img.height)
+                img.pop()
+            }
+        }
+    };
+
+    if (parent != null) new p5(sketch, parent);
+</script>
+
+<style>
+    #p5Parent{
+        position: fixed;
+        /* left: 0;
+        top: 0; */
+        z-index: -10;
+    }
+
+    #p5Parent > canvas{
+        /* align-self: center; */
+    }
+</style>

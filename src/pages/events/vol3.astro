@@ -3,10 +3,15 @@ import MinimumLayout from "../../layouts/MinimumLayout.astro";
 import V3TopList from "../../components/v3/v3TopList.astro";
 import V3Statements from "../../components/v3/v3Statements.astro";
 
+import P5Bg from "../../components/P5bg.astro";
 
 import Container from "../../layouts/Container.astro";
+import Performer from "../../components/v3/Performer.astro";
 import ExternalLinks from "../../components/ExternalLinks.astro";
 import About from "../../components/About.astro";
+import Footer from "../../layouts/Footer.astro";
+
+import Content from "../../components/v3/Content.astro";
 ---
 
 <MinimumLayout
@@ -16,61 +21,121 @@ import About from "../../components/About.astro";
 
     <main>
 
-    <section id="top" class="fullWid font-shan">
-        <p class="font-nijimi">オーディオビジュアルイベント / フロウ vol.3</p>
-        <h1>
-            <img src="https://placehold.jp/600x320.png" alt="">
-        </h1>
+        <P5Bg></P5Bg>
+
+        <section id="top"
+            class="py-5
+            fullWid min-h-screen
+            flex justify-between items-center flex-col"
+            >
+            <p class="font-nijimi">オーディオビジュアルイベント / フロウ vol.3</p>
+            
+            <div class="font-shan w-4/5 md:w-1/3 pt-24">
+                <h1 class="font-nijimi mb-10">
+                    <img src="/images/Flow_Logo_Large.webp" alt="Flowのロゴ" class="w-full object-contain">
+                </h1>
         
-        <V3TopList upper="12/4.WED" lower="18:00~21:00"></V3TopList>
-        <V3TopList upper="at TERRACE GATE" lower="on Ritsumeikan Univ. OIC"></V3TopList>
-
-        <div>
-            <p>参加無料・予約不要・入退室自由</p>
-
-            <div>
-                <p class="font-nijimi">Produced by </p>
-                <img src="https://placehold.jp/80x40.png" alt="">
+                <div class="flex flex-col items-end">
+                    <V3TopList upper="12/4.WED" lower="18:00~21:00"></V3TopList>
+                    <V3TopList upper="at TERRACE GATE" lower="on Ritsumeikan Univ. OIC"></V3TopList>
+                </div>
             </div>
+
+            <div class="
+                w-full flex
+                flex-col sm:flex-row justify-around items-center gap-4
+                px-5
+                font-nijimi">
+                <p>参加無料・予約不要・入退室自由</p>
+
+                <div class="flex gap-2">
+                    <p class="font-nijimi">Produced by</p>
+                    <img src="https://placehold.jp/80x40.png" alt="HitaHitaのロゴ">
+                </div>
+            </div>
+        </section>
+
+        <!-- BG FADE IN -->
+         <div id="bg-fade"></div>
+
+        <div id="bg-black">
+            <section>
+                <Container>
+                    <h2 class="text-justify" style="margin-top: 0;">
+                        Flowは<span class="text-3xl mx-1">「ひたる」</span>オーディオビジュアルイベントです。
+                    </h2>
+
+                    
+                    <Content>
+                        <div class="my-10 grid grid-cols-1 gap-10">
+                            <V3Statements></V3Statements>
+                        </div>
+                    </Content>
+                </Container>
+            </section>
+
+            <!-- <Container><hr></Container> -->
+
+            <section id="performers">
+                <Container>
+                    <h2>Flow vol.3 出演者</h2>
+                    <Content>
+                        <div class="flex flex-col gap-5 p-3">
+                            <Performer
+                                name="早く寝ます & sbm"
+                                img1="https://placehold.jp/150x150.png"
+                                img2="https://placehold.jp/150x150.png"
+                                start={{hr: 17, mn: 15}}
+                                invert={false}
+                            ></Performer>
+                            <Performer
+                                name="早く寝ます & sbm"
+                                img1="https://placehold.jp/150x150.png"
+                                img2="https://placehold.jp/150x150.png"
+                                start={{hr: 17, mn: 15}}
+                                invert={false}
+                            ></Performer>
+                            <Performer
+                                name="早く寝ます & sbm"
+                                img1="https://placehold.jp/150x150.png"
+                                img2="https://placehold.jp/150x150.png"
+                                start={{hr: 17, mn: 15}}
+                                invert={false}
+                            ></Performer><Performer
+                                name="早く寝ます & sbm"
+                                img1="https://placehold.jp/150x150.png"
+                                img2="https://placehold.jp/150x150.png"
+                                start={{hr: 17, mn: 15}}
+                                invert={false}
+                            ></Performer>
+                        </div>
+                    </Content>
+                </Container>
+            </section>
+
+            <!-- <Container><hr></Container> -->
+
+            <section id="externalLinks">
+                <Container>
+                    <Content>
+                        <ExternalLinks></ExternalLinks>
+                    </Content>
+                </Container>
+            </section>
+
+            <!-- <Container><hr></Container> -->
+
+            <section id="about">
+                <Container>
+                    <h2>HitaHitaとは</h2>
+                    <Content>
+                        <About></About>
+                    </Content>
+                </Container>
+            </section>
+
+            <Footer></Footer>
         </div>
-    </section>
-
-    <section>
-        <Container>
-            <h2 class="text-justify text-xl">
-                Flowは<span class="text-2xl mx-1">「ひたる」</span>オーディオビジュアルイベントです。
-            </h2>
-
-            <div class="my-5 grid grid-cols-1 gap-5">
-                <V3Statements></V3Statements>
-            </div>
-        </Container>
-    </section>
-
-    <Container><hr></Container>
-
-    <section id="performers">
-        <Container>
-            <h2>Flow vol.3 出演者</h2>
-            <p>公開をお待ちください！</p>
-        </Container>
-    </section>
-
-    <Container><hr></Container>
-
-    <section id="externalLinks">
-        <Container>
-            <ExternalLinks></ExternalLinks>
-        </Container>
-    </section>
-
-    <Container><hr></Container>
-
-    <section id="about">
-        <Container>
-            <About></About>
-        </Container>
-    </section>
 
     </main>
 </MinimumLayout>
@@ -91,5 +156,51 @@ import About from "../../components/About.astro";
 
     hr{
         margin: 30px 20px;
+    }
+
+    h2{
+        font-size: 1.8rem;
+        margin: 15px 0;
+        border-bottom: 1px dashed #fff;
+        padding-bottom: 10px;
+    }
+
+    #bg-fade{
+        height: 150px;
+        background: rgb(80,80,80);
+        background: linear-gradient(0deg, rgba(80,80,80,0.7) 0%, rgba(80,80,80,0) 100%);
+    }
+    #bg-black{
+        background: rgb(80,80,80);
+        background: linear-gradient(0deg, rgba(80,80,80,0.9) 0%, rgba(80,80,80,0.7) 100%);
+    }
+
+    /* SCROLL BAR */
+    body {
+    --sb-track-color: #2f2f33;
+    --sb-thumb-color: #e2e2e2;
+    --sb-size: 5px;
+    }
+
+    body::-webkit-scrollbar {
+    width: var(--sb-size)
+    }
+
+    body::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 3px;
+    }
+
+    body::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 3px;
+    border: 1px solid #484848;
+    }
+
+    @supports not selector(::-webkit-scrollbar) {
+    body {
+        scrollbar-color: var(--sb-thumb-color)
+                        var(--sb-track-color);
+    }
     }
 </style>
