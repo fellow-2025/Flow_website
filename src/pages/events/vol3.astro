@@ -48,9 +48,9 @@ import Content from "../../components/v3/Content.astro";
                 font-nijimi">
                 <p>参加無料・予約不要・入退室自由</p>
 
-                <div class="flex gap-2">
-                    <p class="font-nijimi">Produced by</p>
-                    <img src="https://placehold.jp/80x40.png" alt="HitaHitaのロゴ">
+                <div class="flex gap-2 items-center">
+                    <p class="font-nijimi">Produced by HitaHita</p>
+                    <img src="/images/poyo.webp" alt="HitaHitaのロゴ" style="height:50px; width:auto;">
                 </div>
             </div>
         </section>
@@ -80,32 +80,53 @@ import Content from "../../components/v3/Content.astro";
                 <Container>
                     <h2>Flow vol.3 出演者</h2>
                     <Content>
-                        <div class="flex flex-col gap-5 p-3">
+                        <div class="flex flex-col gap-12 xl:gap-5 p-3">
                             <Performer
-                                name="早く寝ます & sbm"
-                                img1="https://placehold.jp/150x150.png"
-                                img2="https://placehold.jp/150x150.png"
-                                start={{hr: 17, mn: 15}}
+                                name="vein+"
+                                img1="vein_01"
+                                img2="vein_02"
+                                start={{hr: 18, mn: 0}}
+                                invert={false}
+                            ></Performer>
+                            <Performer
+                                name="ATm & にとりん"
+                                img1="ATm"
+                                img2="nitorin"
+                                start={{hr: 18, mn: 25}}
                                 invert={false}
                             ></Performer>
                             <Performer
                                 name="早く寝ます & sbm"
-                                img1="https://placehold.jp/150x150.png"
-                                img2="https://placehold.jp/150x150.png"
-                                start={{hr: 17, mn: 15}}
-                                invert={false}
-                            ></Performer>
-                            <Performer
-                                name="早く寝ます & sbm"
-                                img1="https://placehold.jp/150x150.png"
-                                img2="https://placehold.jp/150x150.png"
-                                start={{hr: 17, mn: 15}}
+                                img1="ruito_hasegawa"
+                                img2="sbm"
+                                start={{hr: 18, mn: 50}}
                                 invert={false}
                             ></Performer><Performer
-                                name="早く寝ます & sbm"
-                                img1="https://placehold.jp/150x150.png"
-                                img2="https://placehold.jp/150x150.png"
-                                start={{hr: 17, mn: 15}}
+                                name="HitaHita"
+                                img1="hitahita"
+                                img2="NOIMG"
+                                start={{hr: 19, mn: 15}}
+                                invert={false}
+                            ></Performer>
+                            <Performer
+                                name="EchoFrame"
+                                img1="kosei_nakajima"
+                                img2="shigemoto-reina"
+                                start={{hr: 19, mn: 40}}
+                                invert={false}
+                            ></Performer>
+                            <Performer
+                                name="M4ss0 & 可ノウ 星"
+                                img1="m4ss0"
+                                img2="kanosei"
+                                start={{hr: 20, mn: 5}}
+                                invert={false}
+                            ></Performer>
+                            <Performer
+                                name="帰ってきたエイゾウくん"
+                                img1="kondou"
+                                img2="sbm"
+                                start={{hr: 20, mn: 30}}
                                 invert={false}
                             ></Performer>
                         </div>

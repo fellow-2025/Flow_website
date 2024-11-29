@@ -13,28 +13,44 @@ interface Props{
 const { name, img1, img2, start, invert } = Astro.props;
 ---
 
-<div class="flex flex-col md:flex-row justify-between">
-    <span class="inline md:hidden self-start">
-        {start.hr} : {start.mn} ～
+<div class="grid grid-cols-12">
+    <span class="mb-2 xl:mb-0 xl:hidden self-start col-span-12 xl:col-span-2 flex items-center">
+        {String(start.hr).padStart(2, "0")} : {String(start.mn).padStart(2, "0")} ～
     </span>
 
-    <div class="performer flex flex-col md:flex-row items-center gap-3">
-        <div class="flex gap-3">
-            <img class="profile-img" src={img1} alt=`${name}の画像`>
-            <img class="profile-img" src={img2} alt=`${name}の画像`>
-        </div>
-        <h3 class="profile-name text-xl">{name}</h3>
+    <div class="performer grid grid-cols-6 gap-3 xl:gap-10 col-span-12 xl:col-span-10">
+        <img class:list={["profile-img", img2 == "NOIMG" ? "col-span-6 xl:col-span-2 single inline-block" : "col-span-3 xl:col-span-1"]} src={"/images/profile/" + img1 + ".webp"} alt=`${name}の画像`>
+        <img class:list={["profile-img col-span-3 xl:col-span-1", img2 == "NOIMG" ? "hidden" : ""]} src={"/images/profile/" + img2 + ".webp"} alt=`${name}の画像`>
+        <h3 class="flex items-center profile-name col-span-6 xl:col-span-3 text-2xl">{name}</h3>
     </div>
 
-    <span class="hidden md:inline">
-        {start.hr} : {start.mn} ～
+    <span class="hidden xl:flex items-center justify-end col-span-2">
+        {String(start.hr).padStart(2, "0")} : {String(start.mn).padStart(2, "0")} ～
     </span>
 </div>
 
 <style>
+    :root{
+        --prof-img-width: 120px;
+    }
+
     .profile-img{
-        width: 90px;
+        width: 100%;
         height: auto;
+
+        transition: all;
+        transition-duration: 200ms;
+        transform: translate(0,0);
+        box-shadow: 0px 0px 0px 0px rgb(20, 20, 20);
+    }
+
+    .profile-img:hover{
+        transform: translate(-1px,-1px);
+        box-shadow: 1px 1px .5px 1px rgb(20, 20, 20);
+    }
+
+    .single{
+        width: 100%;
     }
 
     .profile-name{
