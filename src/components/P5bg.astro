@@ -51,7 +51,12 @@
         }
 
         p.windowResized = () => {
+            img.clear()
+
             resizeSquare()
+            bringCanvasCenter()
+
+            drawPoints()
         }
 
         const resizeSquare = () => {
