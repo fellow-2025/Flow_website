@@ -1,5 +1,5 @@
 ---
-import ReactComponent from "../../islands/v4/ReactComponent";
+import ReactComponent from "../../islands/v4/ThreeBackground";
 
 import Layout from "../../layouts/Layout.astro";
 
@@ -9,11 +9,12 @@ import Layout from "../../layouts/Layout.astro";
     title="hoge"
     desc="fuga"
     favicon="none">
-    <ReactComponent client:load></ReactComponent>
+    <ReactComponent client:only="react"></ReactComponent>
 </Layout>
 
 <style>
     html{
-        background-color: white;
+        background: rgb(30,155,68);
+        background: linear-gradient(142deg, rgba(30,155,68,1) 0%, rgba(131,191,154,1) 100%);
     }
 </style>
