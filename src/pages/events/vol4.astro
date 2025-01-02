@@ -1,0 +1,19 @@
+---
+import ReactComponent from "../../islands/v4/ReactComponent";
+
+import Layout from "../../layouts/Layout.astro";
+
+---
+
+<Layout
+    title="hoge"
+    desc="fuga"
+    favicon="none">
+    <ReactComponent client:load></ReactComponent>
+</Layout>
+
+<style>
+    html{
+        background-color: white;
+    }
+</style>
