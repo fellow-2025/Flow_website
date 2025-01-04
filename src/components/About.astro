@@ -1,15 +1,34 @@
+---
+interface Props{
+    dark? : boolean
+}
+
+const {dark} = Astro.props
+---
+
 <div>
     <p class="mb-4">
         HitaHitaは きむらこうや & 米田菜々穂 のチームです。<br />
         VJ や DJ , クリエイティブコーディングなどの活動を幅広く行っています。<br />
         ぜひ、こちらのページからご覧ください。
     </p>
-    <a href="https://hita-hita.notion.site/HitaHita-cf92f88d0cde45b4b48da76bca617f47">HitaHita</a>
+    <a href="https://hita-hita.notion.site/HitaHita-cf92f88d0cde45b4b48da76bca617f47" class:list={dark ? "dark" : ""}>HitaHita</a>
 </div>
 
 <style>
     a{
+        transition: all;
+		transition-duration: 200ms;
+        
         border-bottom: 1px dashed gray;
         padding: 2px 3px;
+    }
+
+    a:hover{
+        border-color: white;
+    }
+
+    .dark{
+        border-color: rgb(15 23 42);;
     }
 </style>

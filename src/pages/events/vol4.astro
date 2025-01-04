@@ -1,20 +1,99 @@
 ---
-import ReactComponent from "../../islands/v4/ThreeBackground";
+import ThreeBackground from "../../islands/v4/ThreeBackground";
 
 import Layout from "../../layouts/Layout.astro";
+import Container from "../../layouts/Container.astro";
+import Footer from "../../layouts/Footer.astro";
 
----
+import V4Top from "../../components/v4/V4Top.astro"
 
-<Layout
-    title="hoge"
-    desc="fuga"
-    favicon="none">
-    <ReactComponent client:only="react"></ReactComponent>
-</Layout>
+import V4Statements from "../../components/v4/v4Statements.astro";
+import V4Performers from "../../components/v4/v4Performers.astro";
+
+import ExternalLinks from "../../components/ExternalLinks.astro";
+import About from "../../components/About.astro";
+--- 
+
+<div id="grain">
+    <Layout
+        title="FLOW vol.4"
+        desc="オーディオビジュアルイベントFLOWの第4回。2025年1月9日に開催。"
+        favicon="/favicon.ico">
+
+        <ThreeBackground client:only="react"></ThreeBackground>
+
+        <main>
+            <section id="top" class="overflow-hidden text-slate-50">
+                <V4Top></V4Top>
+            </section>
+
+            <!-- <div class="bg-fade"></div> -->
+
+            <div id="content" class="mt-36 text-slate-900">
+                <section id="statement" class="font-nijimi">
+                    <Container>
+                        <h2>Flowは「ひたる」オーディオビジュアルイベントです。</h2>
+                        <div class="mx-5">
+                            <V4Statements></V4Statements>
+                        </div>
+                    </Container>
+                </section>
+    
+                <section id="performers" class="font-nijimi">
+                    <Container>
+                        <h2>Flow vol.4 出演者</h2>
+                        <div class="mx-5">
+                            <V4Performers></V4Performers>
+                        </div>
+                    </Container>
+                </section>
+    
+                <section id="externalLinks" class="font-nijimi">
+                    <Container>
+                        <div class="mx-5">
+                            <ExternalLinks dark={true}></ExternalLinks>
+                        </div>
+                    </Container>
+                </section>
+    
+                <section id="about" class="font-nijimi">
+                    <Container>
+                        <h2>HitaHitaとは</h2>
+                        <div class="mx-5">
+                            <About dark={true}></About>
+                        </div>
+                    </Container>
+                </section>
+    
+                <Footer></Footer>
+            </div>
+        </main>
+    </Layout>
+</div>
 
 <style>
     html{
         background: rgb(30,155,68);
-        background: linear-gradient(142deg, rgba(30,155,68,1) 0%, rgba(131,191,154,1) 100%);
+        background: linear-gradient(10deg, rgb(57, 161, 88) 0%, rgba(131,191,154,1) 100%);
+    }
+
+    #grain{
+        background: url("/images/grain.webp") repeat;
+    }
+
+    .bg-fade{
+        height: 150px;
+        background: rgb(80,80,80);
+        background: linear-gradient(0deg, rgba(80,80,80,0.7) 0%, rgba(80,80,80,0) 100%);
+    }
+    #content{
+        /* background-color: rgba(80,80,80,.7); */
+    }
+
+    h2{
+        font-size: 1.8rem;
+        margin: 15px 0;
+        border-bottom: 1px dashed rgb(15 23 42);
+        padding-bottom: 10px;
     }
 </style>

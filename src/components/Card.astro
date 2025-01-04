@@ -3,12 +3,13 @@ interface Props {
 	title: string;
 	body: string;
 	href: string;
+	dark?: boolean;
 }
 
-const { href, title, body } = Astro.props;
+const { href, title, body, dark } = Astro.props;
 ---
 
-<div class="link-card">
+<div class="link-card" class:list={dark ? "dark" : ""}>
 	<a href={href}>
 		<h2 class="text-lg mb-3">
 			{title}
@@ -19,6 +20,7 @@ const { href, title, body } = Astro.props;
 		</p>
 	</a>
 </div>
+
 <style>
 	.link-card{
 		transition: all;
@@ -29,8 +31,12 @@ const { href, title, body } = Astro.props;
 		border-left: none;
 		border-top: none;
 	}
-
+	
 	.link-card:hover, .link-card:active{
 		border-color: #eee;
+	}
+
+	.dark{
+		border-color: rgb(15 23 42);
 	}
 </style>

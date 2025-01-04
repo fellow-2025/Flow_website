@@ -1,0 +1,64 @@
+---
+interface Props{
+    name: string;
+    img1: string;
+    img2: string;
+    start: {
+        hr: number,
+        mn: number
+    }
+    invert: boolean
+    vol?: number
+}
+
+const { name, img1, img2, start, invert, vol } = Astro.props;
+---
+
+<div class="performer grid grid-cols-12">
+    <span class="mb-2 xl:mb-0 xl:hidden self-start flex items-center col-span-12">
+        {String(start.hr).padStart(2, "0")} : {String(start.mn).padStart(2, "0")} ～
+    </span>
+
+    <div class="col-span-12 xl:col-span-10 grid grid-cols-6 gap-5">
+        <div class="flex col-span-6 lg:col-span-3 xl:col-span-2 gap-3 justify-start lg:justify-end">
+            <img class="profile-img" src={"/images/profile/" + (vol ? `/v${vol}/` : "") + img1 + ".webp"} alt=`${name}の画像`>
+            <img class:list={["profile-img", img2 == "NOIMG" ? "hidden" : ""]} src={"/images/profile/" + (vol ? `/v${vol}/` : "") + img2 + ".webp"} alt=`${name}の画像`>
+        </div>
+
+        <h3 class="flex col-span-6 lg:col-span-3 xl:col-span-4 items-center profile-name text-2xl">{name}</h3>
+    </div>
+
+    <span class="hidden xl:flex items-center justify-end col-span-2">
+        {String(start.hr).padStart(2, "0")} : {String(start.mn).padStart(2, "0")} ～
+    </span>
+</div>
+
+<style>
+    :root{
+        --prof-img-width: 120px;
+    }
+
+    .profile-img{
+        width: 45%;
+        max-width: 150px;
+
+        height: auto;
+
+        transition: all;
+        transition-duration: 200ms;
+        transform: translate(0,0);
+        box-shadow: 0px 0px 0px 0px rgb(20, 20, 20);
+    }
+
+    .profile-img:hover{
+        transform: translate(-1px,-1px);
+        box-shadow: 1px 1px .5px 1px rgb(20, 20, 20);
+    }
+
+    .single{
+        width: 100%;
+    }
+
+    .profile-name{
+    }
+</style>
