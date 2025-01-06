@@ -1,0 +1,62 @@
+---
+import Image from "astro/components/Image.astro"
+
+---
+
+<!-- vol4 fullwidth top section -->
+<div class="wrapper w-full h-full min-h-screen text-white flex justify-between items-center flex-col">
+    <p class="font-nijimi py-3">オーディオビジュアルイベント / フロウ vol.4</p>
+
+    <div class="info font-shan w-4/5 md:w-1/3 pt-24">
+        <h1 class="font-nijimi mb-10">
+            <img src="/images/Flow_Logo_Large.webp" alt="Flowのロゴ" class="w-full object-contain">
+        </h1>
+
+        <ul>
+            <li>1/9. THU</li>
+            <li>18:00~21:00</li>
+        </ul>
+        <ul>
+            <li>at TERRACE GATE</li>
+            <li>
+                on Ritsumeikan Univ. OIC<br>
+                #flow_hitahita
+            </li>
+        </ul>
+    </div>
+
+    <div class="
+        w-full flex
+        flex-col sm:flex-row justify-around items-center gap-4
+        px-5
+        font-nijimi
+        pb-3"
+    >
+        <p>参加無料・予約不要・入退室自由</p>
+
+        <div class="flex gap-2 items-center">
+            <p class="font-nijimi">Produced by HitaHita</p>
+            <img src="/images/poyo.webp" alt="HitaHitaのロゴ" style="height:50px; width:auto;">
+        </div>
+    </div>
+</div>
+
+<style>
+    .info ul{
+        text-align: end;
+        margin-top: .5rem;
+        margin-top: .5rem;
+    }
+
+    .info ul li{
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+    }
+    .info ul li:first-child{
+        font-weight: bold;
+    }
+    .info ul li:last-child{
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+    }
+</style>

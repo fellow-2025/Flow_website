@@ -1,0 +1,66 @@
+---
+import '@fontsource/source-sans-pro'
+import { string } from 'astro:schema';
+
+interface Props {
+	title: string;
+	desc: string;
+	favicon: string;
+}
+
+const { title, desc, favicon } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={desc} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href={favicon} />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style>
+	html{
+		background-color: #09090a;
+	}
+</style>
+
+<style is:global>
+	@font-face {
+		font-family: MaboroshiNoNijimi;
+		src: url('/fonts/Nijimi/nijimi.woff');
+	}
+</style>
+
+<style>
+	/* disabled astro template style */
+	/*:root {
+		--accent: 18, 18, 204;
+		--accent-light: 224, 204, 250;
+		--accent-dark: 49, 10, 101;
+		--accent-gradient: linear-gradient(
+			45deg,
+			rgb(var(--accent)),
+			rgb(var(--accent-light)) 30%,
+			white 60%
+		);
+	}
+	code {
+		font-family:
+			Menlo,
+			Monaco,
+			Lucida Console,
+			Liberation Mono,
+			DejaVu Sans Mono,
+			Bitstream Vera Sans Mono,
+			Courier New,
+			monospace;
+	} */
+</style>

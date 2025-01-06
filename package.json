@@ -1,0 +1,31 @@
+{
+  "name": "",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "devExpose": "astro dev --host 0.0.0.0",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/netlify": "^5.5.4",
+    "@astrojs/react": "^4.1.2",
+    "@astrojs/tailwind": "^5.1.2",
+    "@fontsource/source-sans-pro": "^5.1.0",
+    "@types/p5": "^1.7.6",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@types/three": "^0.171.0",
+    "astro": "^4.16.10",
+    "p5": "^1.11.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^3.4.14",
+    "three": "^0.172.0",
+    "typescript": "^5.6.3"
+  }
+}
