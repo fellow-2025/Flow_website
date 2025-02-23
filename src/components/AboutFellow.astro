@@ -1,0 +1,32 @@
+---
+interface Props{
+    dark? : boolean
+}
+
+const {dark} = Astro.props
+---
+
+<div>
+    <p class="mb-4">
+        Fellowは、オーディオビジュアルイベント『Flow』の運営メンバー7名によるチームです。<br />
+        『Flow』の開催を通じ、VJ や DJ , クリエイティブコーディングなどの活動を披露する場を創出します。
+    </p>
+</div>
+
+<style>
+    a{
+        transition: all;
+		transition-duration: 200ms;
+        
+        border-bottom: 1px dashed gray;
+        padding: 2px 3px;
+    }
+
+    a:hover{
+        border-color: white;
+    }
+
+    .dark{
+        border-color: rgb(15 23 42);;
+    }
+</style>

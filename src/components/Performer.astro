@@ -21,8 +21,12 @@ const { name, img1, img2, start, invert, vol } = Astro.props;
 
     <div class="col-span-12 xl:col-span-10 grid grid-cols-6 gap-5">
         <div class="flex col-span-6 lg:col-span-3 xl:col-span-2 gap-3 justify-start lg:justify-end">
-            <img class="profile-img" src={"/images/profile/" + (vol ? `/v${vol}/` : "") + img1 + ".webp"} alt=`${name}の画像`>
-            <img class:list={["profile-img", img2 == "NOIMG" ? "hidden" : ""]} src={"/images/profile/" + (vol ? `/v${vol}/` : "") + img2 + ".webp"} alt=`${name}の画像`>
+            <img class="profile-img" src={"/images/performers/" + img1 + ".webp"} alt=`${name}の画像`>
+            {
+                img2 != "NOIMG" && (
+                    <img class="profile-img" src={"/images/performers/" + img2 + ".webp"} alt=`${name}の画像` />
+                )
+            }
         </div>
 
         <h3 class="flex col-span-6 lg:col-span-3 xl:col-span-4 items-center profile-name text-2xl">{name}</h3>

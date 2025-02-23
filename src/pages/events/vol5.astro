@@ -1,0 +1,115 @@
+---
+import ThreeBackground from "../../islands/v5/ThreeBackground";
+
+import Layout from "../../layouts/Layout.astro";
+import Container from "../../layouts/Container.astro";
+import Footer from "../../layouts/Footer.astro";
+
+import V5Top from "../../components/v5/V5Top.astro"
+import Top from "../../components/Top.astro";
+
+import V4Statements from "../../components/v4/v4Statements.astro";
+import V5Performers from "../../components/v5/V5Performers.astro";
+
+import ExternalLinks from "../../components/ExternalLinks.astro";
+import AboutFellow from "../../components/AboutFellow.astro";
+
+const vol = 5
+
+--- 
+
+<Layout
+    title="FLOW vol.5"
+    desc="オーディオビジュアルイベントFLOWの第5回。2025年3月11日に開催。"
+    favicon="/favicon.ico">
+
+    <!-- <ThreeBackground client:only="react"></ThreeBackground> -->
+
+    <main>
+        <section id="top" class="overflow-hidden text-slate-50">
+            <!-- <V5Top></V5Top> -->
+            <Top
+                nVol={vol},
+                yr={2025},
+                mn={1},
+                dt={9},
+                timeFrom={1800},
+                timeTo={2100},
+                place0="TERRACE GATE",
+                place1="Ritsumeikan Univ. OIC",
+                hashtag="#flow_hitahita",
+                heldBy="Fellow",
+                imgName="poyo.webp",
+            / >
+        </section>
+
+        <!-- <div class="bg-fade"></div> -->
+
+        <div id="content" class="mt-36 text-slate-900">
+            <section id="statement" class="font-nijimi">
+                <Container>
+                    <h2>ごあいさつ</h2>
+                    <div class="mx-5">
+                        <V4Statements />
+                    </div>
+                </Container>
+            </section>
+
+            <section id="performers" class="font-nijimi">
+                <Container>
+                    <h2>Flow vol.{vol} 出演者</h2>
+                    <div class="mx-5">
+                        <V5Performers />
+                    </div>
+                </Container>
+            </section>
+
+            <section id="externalLinks" class="font-nijimi">
+                <Container>
+                    <div class="mx-5">
+                        <ExternalLinks dark={true} />
+                    </div>
+                </Container>
+            </section>
+
+            <section id="about" class="font-nijimi">
+                <Container>
+                    <h2>Fellowとは</h2>
+                    <div class="mx-5">
+                        <AboutFellow dark={true} />
+                    </div>
+                </Container>
+            </section>
+
+            <Footer></Footer>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    html{
+        background-color: white;
+        background: rgb(160,89,74);
+        background: linear-gradient(133deg, rgba(160,89,74,1) 0%, rgba(162,141,170,1) 19%, rgba(159,159,211,1) 39%, rgba(101,144,159,1) 69%, rgba(0,116,150,1) 100%);
+    }
+
+    #grain{
+        background: url("/images/grain.webp") repeat;
+    }
+
+    .bg-fade{
+        height: 150px;
+        background: rgb(80,80,80);
+        background: linear-gradient(0deg, rgba(80,80,80,0.7) 0%, rgba(80,80,80,0) 100%);
+    }
+    #content{
+        /* background-color: rgba(80,80,80,.7); */
+    }
+
+    h2{
+        font-size: 1.8rem;
+        margin: 15px 0;
+        border-bottom: 1px dashed rgb(15 23 42);
+        padding-bottom: 10px;
+    }
+</style>
