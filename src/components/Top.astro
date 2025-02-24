@@ -33,16 +33,16 @@ if (String(timeFrom).length != 4 || String(timeTo).length != 4){
 
 const tFrom: time = {
     hr: Math.floor(timeFrom / 100),
-    mn: (timeFrom / 100 % 1) * 100
+    mn: Math.floor((timeFrom / 100 % 1) * 100)
 }
 const tTo: time = {
     hr: Math.floor(timeTo / 100),
-    mn: (timeTo / 100 % 1) * 100
+    mn: Math.floor((timeTo / 100 % 1) * 100)
 }
 
 ---
 
-<div class="wrapper w-full h-full min-h-screen text-white flex justify-between items-center flex-col">
+<div class="wrapper w-full h-full min-h-screen text-stone-200 flex justify-between items-center flex-col">
     <p class="font-nijimi py-3">オーディオビジュアルイベント / フロウ vol.{nVol}</p>
 
     <div class="info font-shan w-4/5 md:w-1/3 pt-24">
@@ -72,9 +72,19 @@ const tTo: time = {
     >
         <p>参加無料・予約不要・入退室自由</p>
 
-        <div class="flex gap-2 items-center">
-            <p class="font-nijimi">Produced by {heldBy}</p>
-            <img src=`/images/${imgName}` alt=`${heldBy}のロゴ` style="height:50px; width:auto;">
+        <div class="flex gap-3 items-center">
+            {
+                heldBy == "HitaHita" && (
+                    <p class="font-nijimi">Produced by {heldBy}</p>
+                    <img src=`/images/${imgName}` alt=`${heldBy}のロゴ` style="height:30px; width:auto;">
+                )
+            }
+            {
+                heldBy == "Fellow" && (
+                    <p class="font-nijimi">Produced by </p>
+                    <img src=`/images/${imgName}` alt=`${heldBy}のロゴ` style="height:30px; width:auto;">
+                )
+            }            
         </div>
     </div>
 </div>

@@ -2,6 +2,8 @@ import * as React from 'react'
 import * as THR from 'three'
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/Addons.js'
 
+import { SimplexNoise } from 'three/examples/jsm/Addons.js'
+
 class Bound {
     start: THR.Vector3 = new THR.Vector3()
     end: THR.Vector3 = new THR.Vector3()
@@ -12,7 +14,7 @@ class Bound {
     }
 }
 
-const initialize = (rndr: THR.WebGLRenderer, cam: THR.PerspectiveCamera) => {
+const initialize = (rndr: THR.WebGLRenderer, cam: THR.OrthographicCamera) => {
     const vv = window.visualViewport
 
     const w = vv ? vv.width : window.innerWidth
@@ -20,7 +22,10 @@ const initialize = (rndr: THR.WebGLRenderer, cam: THR.PerspectiveCamera) => {
 
     rndr.setSize(w, h)
 
-    cam.aspect = w / h
+    cam.left =      -w/2
+    cam.right =      w/2
+    cam.top =       -h/2
+    cam.bottom =     h/2
     cam.updateProjectionMatrix()
 }
 
@@ -79,18 +84,10 @@ export default () => {
         })
         
         // create camera with temporal aspect ratio
-        const cam = new THR.PerspectiveCamera(45, 1 / 1)
-
-        let rndrArea = new Bound()
+        const cam = new THR.OrthographicCamera()
 
         // fit size
         let resizeTimeout = NaN
-
-        const resize = () => {
-            if (resizeTimeout) cancelAnimationFrame(resizeTimeout)
-
-            resizeTimeout = requestAnimationFrame(_ => initialize(rndr, cam))
-        }
 
         {
             const vv = window.visualViewport
@@ -107,65 +104,114 @@ export default () => {
         // ADD OBJECTS
 
         const scn = new THR.Scene()
-
-        // load mesh
-        const N_MESHES = 4
-        let shapes: THR.Group<THR.Object3DEventMap>[] = new Array(N_MESHES).fill(null)
-        let customMeshes: THR.Mesh[] = []
-        new GLTFLoader().load(
-            '/models/v4/shape.glb',
-            (shp) => {
-                shapes = shapes.map(_ => shp.scene.clone())
-
-                customMeshes = shapeSetup(shapes, scn)
-
-                const rx = 6
-                const ry = 2
-
-                const l = customMeshes.length
-
-                customMeshes.forEach((e, i) => {
-                    e.position.x = -rx + (2 * rx / (l - 1)) * i
-                    e.position.y = ((i % 2) * 2 - 1) * ry
-                })
+        
+        // gradient reference
+        const planeGeo = new THR.PlaneGeometry(2, 2)
+        const planeMat = new THR.ShaderMaterial({
+            uniforms:{
+                u_time: { value:0. },
+                u_vpHeight: { value:0. },
+                u_seed: { value: new Date().getMilliseconds() },
+                u_grad: { value: new THR.TextureLoader().load('/images/v5/grad_ref.png') }
             },
-            (prg) => console.log('loading: ' + (prg.loaded / prg.total * 100)),
-            (err) => console.log('Error occured while loading custom mesh:\n' + err)
-        )
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = vec4(position.xy, 0.0, 1.0);
+                }
+            `,
+            fragmentShader: `
+                varying vec2 vUv;
 
+                uniform float u_time;
+                uniform float u_vpHeight;
+                uniform float u_seed;
+                uniform sampler2D u_grad;
 
-        // lights
-        const LDir = new THR.DirectionalLight(0xffffff, 3.)
-        LDir.rotation.set(30, 30, 0)
-        scn.add(LDir)
+                // Shoutout to Lallis, https://www.shadertoy.com/view/MtfXRH
+                float noise3D(vec3 p)
+                {
+                    return fract(sin(dot(p ,vec3(12.9898,78.233,126.7378))) * 43758.5453)*2.0-1.0;
+                }
 
-        const LAmb = new THR.AmbientLight(0xffffff, .1)
-        scn.add(LAmb)
+                vec3 grad(vec3 p)
+                {
+                    return vec3(noise3D(p*1.00), noise3D(p*1.12), noise3D(p*1.23));
+                }
 
+                float perlin3D(vec3 q)
+                {
+                    vec3 f = fract(q);
+                    vec3 p = floor(q);
+                    f = f*f*(3.0-2.0*f);
+
+                    float p0	= dot(grad(p), q-p);
+                    float x 	= dot(grad(p+vec3(1.0,0.0,0.0)), q-(p+vec3(1.0,0.0,0.0)));
+                    float y 	= dot(grad(p+vec3(0.0,1.0,0.0)), q-(p+vec3(0.0,1.0,0.0)));
+                    float z 	= dot(grad(p+vec3(0.0,0.0,1.0)), q-(p+vec3(0.0,0.0,1.0)));
+                    float xy	= dot(grad(p+vec3(1.0,1.0,0.0)), q-(p+vec3(1.0,1.0,0.0)));
+                    float xz	= dot(grad(p+vec3(1.0,0.0,1.0)), q-(p+vec3(1.0,0.0,1.0)));
+                    float yz	= dot(grad(p+vec3(0.0,1.0,1.0)), q-(p+vec3(0.0,1.0,1.0)));
+                    float xyz	= dot(grad(p+1.0), q-(p+1.0));
+                    
+                    return mix(	mix(	mix(p0, x, 	 f.x), 
+                                        mix(y, 	xy,  f.x), 	f.y), 
+                                mix(	mix(z, 	xz,	 f.x), 
+                                        mix(yz, xyz, f.x), 	f.y), 	f.z);
+                }
+
+                float fbm(vec3 p)
+                {
+                    float f = 0.5000*perlin3D(p*1.00);
+                        f+= 0.2500*perlin3D(p*2.01);
+                        f+= 0.1250*perlin3D(p*4.02);
+                        f+= 0.0625*perlin3D(p*8.03);
+                        f/= 0.9375;
+                    return f;
+                }
+
+                vec2 rotUv(vec2 uv, float r)
+                {
+                    float mid = 0.5;
+                    return vec2(
+                        cos(r) * (uv.x - mid) + sin(r) * (uv.y - mid) + mid,
+                        cos(r) * (uv.y - mid) - sin(r) * (uv.x - mid) + mid
+                    );
+                }
+
+                void main() {
+                    vec2 uv = rotUv(vUv.xy, 3.14159265 / 4.);
+                    vec3 crd = vec3(uv.x * 8. + sin(u_time / 10.) * 10., uv.y * 2., u_seed + u_time + u_vpHeight/1000.);
+                    float val = fbm(crd);
+
+                    vec4 clr = texture(u_grad, vec2(clamp((1. - val - .1), 0., 1.), .5));
+
+                    gl_FragColor = clr;
+                    //gl_FragColor = vec4(vec3(val), 1.);
+                }
+            `
+        })
+        const plane = new THR.Mesh(planeGeo, planeMat)
+
+        scn.add(plane)
 
         // LAYOUT
 
-        cam.position.set(0,0,10)
+        cam.position.set(0,0,-1)
 
 
         // RENDER LOOP
+
+        window.addEventListener('scroll', _ => planeMat.uniforms.u_vpHeight.value = window.scrollY)
 
         let fr = 0
         const tick = () => {
             fr++
 
-            // object rotation
-            if (customMeshes[0]){
-                customMeshes.forEach((e, i) => {
-                    const r = e.rotation.y
-                    e.rotation.y = window.scrollY * .001 * ((i % 2) * 2 - 1)
-                    e.rotation.x = window.scrollY * .0002 * ((i % 3) * 2 - 1)
-
-                    e.position.y += ((i % 2) * 2 - 1) * Math.sin(fr / 1000) * .0007
-                })
-            }
-
             rndr.render(scn, cam)
+
+            planeMat.uniforms.u_time.value += .001
 
             requestAnimationFrame(tick)
         }
