@@ -5,10 +5,9 @@ import Layout from "../../layouts/Layout.astro";
 import Container from "../../layouts/Container.astro";
 import Footer from "../../layouts/Footer.astro";
 
-import V5Top from "../../components/v5/V5Top.astro"
 import Top from "../../components/Top.astro";
 
-import V4Statements from "../../components/v4/v4Statements.astro";
+import V5Statements from "../../components/v5/V5Statements.astro";
 import V5Performers from "../../components/v5/V5Performers.astro";
 
 import ExternalLinks from "../../components/ExternalLinks.astro";
@@ -23,7 +22,7 @@ const vol = 5
     desc="オーディオビジュアルイベントFLOWの第5回。2025年3月11日に開催。"
     favicon="/favicon.ico">
 
-    <!-- <ThreeBackground client:only="react"></ThreeBackground> -->
+    <ThreeBackground client:only="react"></ThreeBackground>
 
     <main>
         <section id="top" class="overflow-hidden text-slate-50">
@@ -31,26 +30,26 @@ const vol = 5
             <Top
                 nVol={vol},
                 yr={2025},
-                mn={1},
-                dt={9},
-                timeFrom={1800},
-                timeTo={2100},
+                mn={3},
+                dt={11},
+                timeFrom={1500},
+                timeTo={2030},
                 place0="TERRACE GATE",
                 place1="Ritsumeikan Univ. OIC",
                 hashtag="#flow_hitahita",
                 heldBy="Fellow",
-                imgName="poyo.webp",
+                imgName="fellow.webp",
             / >
         </section>
 
         <!-- <div class="bg-fade"></div> -->
 
-        <div id="content" class="mt-36 text-slate-900">
+        <div id="content" class="mt-36 text-stone-200">
             <section id="statement" class="font-nijimi">
                 <Container>
                     <h2>ごあいさつ</h2>
                     <div class="mx-5">
-                        <V4Statements />
+                        <V5Statements />
                     </div>
                 </Container>
             </section>
@@ -67,7 +66,7 @@ const vol = 5
             <section id="externalLinks" class="font-nijimi">
                 <Container>
                     <div class="mx-5">
-                        <ExternalLinks dark={true} />
+                        <ExternalLinks />
                     </div>
                 </Container>
             </section>
@@ -76,7 +75,7 @@ const vol = 5
                 <Container>
                     <h2>Fellowとは</h2>
                     <div class="mx-5">
-                        <AboutFellow dark={true} />
+                        <AboutFellow />
                     </div>
                 </Container>
             </section>
@@ -90,11 +89,12 @@ const vol = 5
     html{
         background-color: white;
         background: rgb(160,89,74);
-        background: linear-gradient(133deg, rgba(160,89,74,1) 0%, rgba(162,141,170,1) 19%, rgba(159,159,211,1) 39%, rgba(101,144,159,1) 69%, rgba(0,116,150,1) 100%);
-    }
 
-    #grain{
-        background: url("/images/grain.webp") repeat;
+        /* width: 250px;
+        height: 250px; */
+        /* filter: contrast(150%) brightness(100%); */
+        background: linear-gradient(133deg, rgba(160,89,74,1) 0%, rgba(162,141,170,1) 19%, rgba(159,159,211,1) 39%, rgba(101,144,159,1) 69%, rgba(0,116,150,1) 100%),
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 68 68' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     }
 
     .bg-fade{
@@ -109,7 +109,7 @@ const vol = 5
     h2{
         font-size: 1.8rem;
         margin: 15px 0;
-        border-bottom: 1px dashed rgb(15 23 42);
+        border-bottom: 1px dashed #e7e5e4;
         padding-bottom: 10px;
     }
 </style>

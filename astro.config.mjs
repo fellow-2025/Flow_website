@@ -15,6 +15,9 @@ export default defineConfig({
   adapter: cloudflare(),
   integrations: [tailwind(), react()],
   vite: {
+    server: {
+      allowedHosts: ["polaris"]
+    },
     resolve: {
       // Use react-dom/server.edge instead of react-dom/server.browser for React 19.
       // Without this, MessageChannel from node:worker_threads needs to be polyfilled.
