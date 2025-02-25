@@ -182,7 +182,7 @@ export default () => {
 
                 void main() {
                     vec2 uv = rotUv(vUv.xy, 3.14159265 / 4.);
-                    vec3 crd = vec3(uv.x * 8. + sin(u_time / 10.) * 10., uv.y * 2., u_seed + u_time + u_vpHeight/1000.);
+                    vec3 crd = vec3(uv.x * 10., uv.y * 2., u_seed + u_time + u_vpHeight/1000.);
                     float val = fbm(crd);
 
                     vec4 clr = texture(u_grad, vec2(clamp((1. - val - .1), 0., 1.), .5));
