@@ -1,0 +1,181 @@
+<div id="p5Parent"></div>
+
+<script>
+    const parent = document.getElementById('p5Parent')
+
+import { markHTMLString } from 'astro/runtime/server/escape.js'
+    import p5 from 'p5'
+
+    const ease = (x: number): number => {
+        return 1 - Math.sqrt(1 - Math.pow(x, 2))
+    }
+
+    const grainCount = 1000
+
+    const rndSource: number[] = new Array(grainCount).fill(0).map(_ => ease(Math.random()))
+
+    let grainRadius = 250
+    let grainVariance = 90
+
+    const fadeLen = 30
+
+    const desiredCellSize = 50
+    const cellSize = new p5.Vector(1, 1)
+    const cellCount = new p5.Vector(1, 1)
+
+    let img: p5.Graphics
+
+    const sketch = (p: p5) => {
+        p.setup = () => {
+            p.createCanvas(1,1)
+
+            onResize()
+
+            p.noStroke()
+            p.strokeWeight(1)
+            p.rectMode(p.CENTER)
+
+            {
+                // setup resize callback depends on visualviewport availability
+                const vv = window.visualViewport
+                if (vv){
+                    vv.addEventListener('resize', _ => onResize(vv))
+                }else{
+                    window.addEventListener('resize', _ => onResize())
+                }
+            }
+        };
+
+        p.draw = () => {
+            const introOpacity = p.frameCount < fadeLen ? 
+                p.frameCount / fadeLen :
+                1
+
+            p.background(31, 31, 31)
+            // p.rect(0, 0, p.width, p.height)
+
+            p.noFill()
+
+            // const scrHeight = Math.floor(window.scrollY / 100)
+            const scrHeight = Math.floor(Date.now() / 200)
+
+            for (let i = 0; i < cellCount.x; i++) {
+                for (let j = 0; j < cellCount.y; j++) {
+
+                    p.stroke(70, 70, 70, introOpacity * 255)
+                    p.rect(cellSize.x*i + cellSize.x/2, cellSize.y*j + cellSize.y/2, cellSize.x * .8, cellSize.y * .8)
+
+                    const r = rndp(new p5.Vector(i, j + scrHeight))
+
+                    if (r < .9){
+                        continue;
+                        // p.fill(241, 31, 31, introOpacity * 255)
+                    }else{
+                        // p.fill(241, 241, 241, introOpacity * 255)
+                    }
+
+                    p.stroke(241, 31, 31, introOpacity * 255)
+
+                    const ri = rndp(new p5.Vector(i + 10, j + 10 + scrHeight*2))
+                    const ri2 = rndp(new p5.Vector(i + 20, j + 20 + scrHeight*2))
+
+                    const cs = cellSize
+                    iconFuncs[Math.floor(ri * iconFuncs.length)](p, new p5.Vector(cs.x*i + cs.x/2, cs.y*j + cs.y/2))
+                    iconFuncs[Math.floor(ri2 * iconFuncs.length)](p, new p5.Vector(cs.x*i + cs.x/2, cs.y*j + cs.y/2))
+                    // p.ellipse(cs.x*i + cs.x/2, cs.y*j + cs.y/2, 10, 10)
+
+
+                }
+            }
+        }
+
+        const rnd = (inpt: p5.Vector) => {
+            return (Math.sin(
+                p5.Vector.dot(
+                inpt,
+                new p5.Vector(12.9898, 78.233)
+            )) * 43758.5453123) % 1
+        }
+
+        const rndp = (inpt: p5.Vector) => Math.abs(rnd(inpt))
+
+        const drawIcons = () => {
+
+        }
+
+        const iconFuncs: ((p: p5, cntr: p5.Vector) => void)[] = [
+            (p: p5, cntr: p5.Vector) => {
+                p.ellipse(cntr.x, cntr.y, 25, 25)
+            },
+            (p: p5, cntr: p5.Vector) => {
+                p.rect(cntr.x, cntr.y, 25, 25)
+            },
+            (p: p5, cntr: p5.Vector) => {
+                p.push()
+                p.translate(cntr)
+                p.rotate(p.PI / 4)
+
+                p.rect(0, 0, 25, 25)
+                p.pop()
+            },
+            (p: p5, cntr: p5.Vector) => {
+                const half = p5.Vector.mult(p5.Vector.div(cellSize, 2), .6)
+                p.line(cntr.x - half.x, cntr.y - half.y, cntr.x + half.x, cntr.y + half.y)
+                p.line(cntr.x + half.x, cntr.y - half.y, cntr.x - half.x, cntr.y + half.y)
+                // p.rect(cntr.x, cntr.y, 25, 25)
+            },
+            (p: p5, cntr: p5.Vector) => {
+                const rot = rndp(cntr) * p.PI*2
+
+                p.push()
+                p.translate(cntr)
+                p.rotate(rot)
+
+                p.arc(0, 0, 15, 15, 0, rot)
+
+                p.pop()
+            }
+        ]
+
+        const calcCellSize = () => {
+            cellSize.x = p.width / Math.floor(p.width / desiredCellSize)
+            cellSize.y = p.height / Math.floor(p.height / desiredCellSize)
+        }
+
+        const calcCellCount = () => {
+            cellCount.x = Math.floor(p.width / cellSize.x)
+            cellCount.y = Math.floor(p.height / cellSize.y)
+        }
+
+        // from easings.net. thanks.
+        function easeInOutQuint(x: number): number {
+            return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2;
+        }
+
+        const onResize = (vv?: VisualViewport) => {
+            if (vv){
+                p.resizeCanvas(vv.width, vv.height)
+            }else{
+                p.resizeCanvas(p.windowWidth, p.windowHeight)
+            }
+
+            calcCellSize()
+            calcCellCount()
+        }
+    };
+
+    if (parent != null) new p5(sketch, parent);
+</script>
+
+<style>
+    #p5Parent{
+        position: fixed;
+        /* left: 0;
+        top: 0; */
+        z-index: -10;
+    }
+
+    #p5Parent > canvas{
+        /* align-self: center; */
+    }
+</style>
