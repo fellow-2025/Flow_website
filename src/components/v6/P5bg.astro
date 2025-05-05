@@ -119,7 +119,7 @@ import { markHTMLString } from 'astro/runtime/server/escape.js'
                 p.pop()
             },
             (p: p5, cntr: p5.Vector) => {
-                const half = p5.Vector.mult(p5.Vector.div(cellSize, 2), .6)
+                const half = new p5.Vector(cellSize.x*.3, cellSize.y*.3)
                 p.line(cntr.x - half.x, cntr.y - half.y, cntr.x + half.x, cntr.y + half.y)
                 p.line(cntr.x + half.x, cntr.y - half.y, cntr.x - half.x, cntr.y + half.y)
                 // p.rect(cntr.x, cntr.y, 25, 25)
