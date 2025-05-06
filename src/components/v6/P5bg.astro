@@ -3,19 +3,7 @@
 <script>
     const parent = document.getElementById('p5Parent')
 
-import { markHTMLString } from 'astro/runtime/server/escape.js'
     import p5 from 'p5'
-
-    const ease = (x: number): number => {
-        return 1 - Math.sqrt(1 - Math.pow(x, 2))
-    }
-
-    const grainCount = 1000
-
-    const rndSource: number[] = new Array(grainCount).fill(0).map(_ => ease(Math.random()))
-
-    let grainRadius = 250
-    let grainVariance = 90
 
     const fadeLen = 30
 
@@ -56,25 +44,29 @@ import { markHTMLString } from 'astro/runtime/server/escape.js'
 
             p.noFill()
 
+            const now = Date.now()
+            const scrSpd = 5000
+
             // const scrHeight = Math.floor(window.scrollY / 100)
-            const scrHeight = Math.floor(Date.now() / 200)
+            const scrHeight = Math.floor(now / scrSpd)
+
+            const scrOpacity = smoothstep(Math.sin(now / scrSpd * p.PI))
+            // const scrOpacity = Math.sin(now / scrSpd * p.PI * 2)
 
             for (let i = 0; i < cellCount.x; i++) {
                 for (let j = 0; j < cellCount.y; j++) {
 
+                    // cell
                     p.stroke(70, 70, 70, introOpacity * 255)
                     p.rect(cellSize.x*i + cellSize.x/2, cellSize.y*j + cellSize.y/2, cellSize.x * .8, cellSize.y * .8)
 
+                    // random value
                     const r = rndp(new p5.Vector(i, j + scrHeight))
 
-                    if (r < .9){
-                        continue;
-                        // p.fill(241, 31, 31, introOpacity * 255)
-                    }else{
-                        // p.fill(241, 241, 241, introOpacity * 255)
-                    }
+                    if (r < .85) continue;
 
-                    p.stroke(241, 31, 31, introOpacity * 255)
+                    const pwr = rndp(new p5.Vector(i, j))
+                    p.stroke(241, 31, 31, introOpacity * 255 * pwr * scrOpacity)
 
                     const ri = rndp(new p5.Vector(i + 10, j + 10 + scrHeight*2))
                     const ri2 = rndp(new p5.Vector(i + 20, j + 20 + scrHeight*2))
@@ -89,6 +81,8 @@ import { markHTMLString } from 'astro/runtime/server/escape.js'
             }
         }
 
+        const smoothstep = (v: number) => v * v * (3 - 2 * v)
+
         const rnd = (inpt: p5.Vector) => {
             return (Math.sin(
                 p5.Vector.dot(
@@ -98,10 +92,6 @@ import { markHTMLString } from 'astro/runtime/server/escape.js'
         }
 
         const rndp = (inpt: p5.Vector) => Math.abs(rnd(inpt))
-
-        const drawIcons = () => {
-
-        }
 
         const iconFuncs: ((p: p5, cntr: p5.Vector) => void)[] = [
             (p: p5, cntr: p5.Vector) => {
@@ -125,7 +115,8 @@ import { markHTMLString } from 'astro/runtime/server/escape.js'
                 // p.rect(cntr.x, cntr.y, 25, 25)
             },
             (p: p5, cntr: p5.Vector) => {
-                const rot = rndp(cntr) * p.PI*2
+                const rot = Math.floor(rndp(cntr) * 4) * p.PI/2
+                // const rot = Math.max(.25, rndp(cntr)) * p.PI*2
 
                 p.push()
                 p.translate(cntr)
@@ -145,11 +136,6 @@ import { markHTMLString } from 'astro/runtime/server/escape.js'
         const calcCellCount = () => {
             cellCount.x = Math.floor(p.width / cellSize.x)
             cellCount.y = Math.floor(p.height / cellSize.y)
-        }
-
-        // from easings.net. thanks.
-        function easeInOutQuint(x: number): number {
-            return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2;
         }
 
         const onResize = (vv?: VisualViewport) => {
