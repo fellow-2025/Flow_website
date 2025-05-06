@@ -4,16 +4,9 @@ type time = {
     mn: number
 }
 
-type date = {
-    yr: number,
-    mn: number,
-}
-
 interface Props {
     nVol: number,
-    yr: number,
-    mn: number,
-    dt: number,
+    date: Date,
     timeFrom: time,
     timeTo: time,
     place0: string,
@@ -23,18 +16,12 @@ interface Props {
     imgName: string
 }
 
-const {nVol, yr, mn, dt, timeFrom, timeTo, place0, place1, hashtag, heldBy, imgName} = Astro.props
+const {nVol, date, timeFrom, timeTo, place0, place1, hashtag, heldBy, imgName} = Astro.props
+
+import { getDay, getYear, getMonth, getDate } from 'date-fns'
 
 const dayOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-const day = dayOfWeek[new Date(yr, mn, dt).getDay()]
-
-// if (String(timeFrom).length != 4 || String(timeTo).length != 4){
-//     throw new Error(
-//         `Invalid timeFrom or timeTo. Both are must be 4 digits number.\n
-//         from: ${timeFrom}\n
-//         to: ${timeTo}`
-//     )
-// }
+const day = dayOfWeek[getDay(date)]
 
 ---
 
@@ -47,7 +34,8 @@ const day = dayOfWeek[new Date(yr, mn, dt).getDay()]
         </h1>
 
         <ul>
-            <li>{mn}/{dt}. {day}</li>
+            <!-- getmonth is 0-basis!!!!! -->
+            <li>{getMonth(date) + 1}/{getDate(date)}. {day}</li>
             <li>
                 {timeFrom.hr}:{String(timeFrom.mn).padStart(2, "0")}
                 ~

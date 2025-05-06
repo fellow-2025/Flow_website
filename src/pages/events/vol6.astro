@@ -31,9 +31,7 @@ const dateTime = dfParse('2025/5/22', 'yyyy/M/dd', new Date())
             <!-- getMonth is 0 basis!!!!! -->
             <NeoTop
                 nVol={vol},
-                yr={getDfYr(dateTime)},
-                mn={getDfMth(dateTime) + 1},
-                dt={getDfDate(dateTime)},
+                date={dateTime},
                 timeFrom={{hr: 18, mn:15}},
                 timeTo={{hr: 20, mn: 30}},
                 place0="TERRACE GATE",
