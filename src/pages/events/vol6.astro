@@ -1,47 +1,41 @@
 ---
-import ThreeBackground from "../../islands/v5/ThreeBackground";
-
 import Layout from "../../layouts/Layout.astro";
 import Container from "../../layouts/Container.astro";
 import Footer from "../../layouts/Footer.astro";
 
-import Top from "../../components/Top.astro";
+import NeoTop from "../../components/NeoTop.astro";
 
-import Statements from "../../components/StandardStatements.astro";
 import V6Performers from '../../components/v6/V6Performers.astro'
 
 import ExternalLinks from "../../components/ExternalLinks.astro";
 import AboutFellow from "../../components/AboutFellow.astro";
-import { date, datetimeRegex } from "astro:schema";
 
 import P5bg from "../../components/v6/P5bg.astro"
 
-import { parse as dfnsParse, format as dfnsFormat } from 'date-fns'
+import { parse as dfParse, format as dfFormat, getYear as getDfYr, getMonth as getDfMth, getDate as getDfDate } from 'date-fns'
 
 const vol = 6
-const dateTime = dfnsParse('2025/05/22', 'yyyy/MM/dd', new Date())
+const dateTime = dfParse('2025/5/22', 'yyyy/M/dd', new Date())
 
 --- 
 
 <Layout
     title=`FLOW vol.${vol}`
-    desc=`オーディオビジュアルイベントFLOWの第${vol}回。${dfnsFormat(dateTime, 'yyyy年M月dd日')}に開催。`
+    desc=`オーディオビジュアルイベントFLOWの第${vol}回。${dfFormat(dateTime, 'yyyy年M月dd日')}に開催。`
     favicon="/favicon.ico">
-
-    <!-- <ThreeBackground client:only="react"></ThreeBackground> -->
 
     <P5bg></P5bg>
 
     <main>
         <section id="top" class="overflow-hidden text-slate-50">
-            <!-- <V5Top></V5Top> -->
-            <Top
+            <!-- getMonth is 0 basis!!!!! -->
+            <NeoTop
                 nVol={vol},
-                yr={dateTime.getFullYear()},
-                mn={dateTime.getMonth()},
-                dt={dateTime.getDate()},
-                timeFrom={1815},
-                timeTo={2030},
+                yr={getDfYr(dateTime)},
+                mn={getDfMth(dateTime) + 1},
+                dt={getDfDate(dateTime)},
+                timeFrom={{hr: 18, mn:15}},
+                timeTo={{hr: 20, mn: 30}},
                 place0="TERRACE GATE",
                 place1="Ritsumeikan Univ. OIC",
                 hashtag="#flow_fellow",
