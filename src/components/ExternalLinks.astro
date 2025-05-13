@@ -1,6 +1,8 @@
 ---
 import Card from './Card.astro'
 
+import { YouTube } from "astro-embed"
+
 interface Props {
     dark? : boolean
 }
@@ -15,6 +17,8 @@ const { dark } = Astro.props
     href='https://discord.gg/XCqhqjks9c'
     dark = {dark}>
     </Card>
+
+    <YouTube id="dQw4w9WgXcQ" />
 
     <!-- SOLD OUT -->
     <!-- <Card

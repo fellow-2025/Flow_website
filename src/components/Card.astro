@@ -9,16 +9,17 @@ interface Props {
 const { href, title, body, dark } = Astro.props;
 ---
 
-<div class="link-card" class:list={dark ? "dark" : ""}>
-	<a href={href}>
-		<h2 class="text-lg mb-3">
-			{title}
-			<span>&rarr;</span>
-		</h2>
-		<p>
-			{body}
-		</p>
-	</a>
+<div class="link-wrapper">
+	<div class="link-card" class:list={dark ? "dark" : ""}>
+		<a href={href}>
+			<h2 class="text-lg mb-3 underline">
+				{title}
+			</h2>
+			<p>
+				{body}
+			</p>
+		</a>
+	</div>
 </div>
 
 <style>
