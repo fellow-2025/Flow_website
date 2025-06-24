@@ -10,7 +10,7 @@ import V7Performers from '../../components/v7/V7Performers.astro'
 import ExternalLinks from "../../components/ExternalLinks.astro";
 import AboutFellow from "../../components/AboutFellow.astro";
 
-import P5bg from "../../components/v6/P5bg.astro"
+import ThreeBackground from "../../islands/v7/ThreeBackground";
 
 import { parse as dfParse, format as dfFormat, getYear as getDfYr, getMonth as getDfMth, getDate as getDfDate } from 'date-fns'
 
@@ -24,7 +24,7 @@ const dateTime = dfParse('2025/7/15', 'yyyy/M/dd', new Date())
     desc=`オーディオビジュアルイベントFLOWの第${vol}回。${dfFormat(dateTime, 'yyyy年M月dd日')}に開催。`
     favicon="/favicon.ico">
 
-    <!-- <P5bg></P5bg> -->
+    <ThreeBackground client:only="react"></ThreeBackground>
 
     <main>
         <section id="top" class="overflow-hidden text-slate-50">
