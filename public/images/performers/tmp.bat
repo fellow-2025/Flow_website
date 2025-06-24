@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-for %%f in (*.png) do (
+for %%f in (*.png *.jpg *.jpeg *.bmp *.tif) do (
     set "filename=%%~nf"
     echo Processing: %%f
 
