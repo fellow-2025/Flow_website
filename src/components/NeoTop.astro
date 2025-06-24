@@ -11,17 +11,31 @@ interface Props {
     timeTo: time,
     place0: string,
     place1: string,
+    placeAddr?: string,
     hashtag: string,
     heldBy: string,
     imgName: string
 }
 
-const {nVol, date, timeFrom, timeTo, place0, place1, hashtag, heldBy, imgName} = Astro.props
+const {nVol, date, timeFrom, timeTo, place0, place1, placeAddr, hashtag, heldBy, imgName} = Astro.props
 
 import { getDay, getYear, getMonth, getDate } from 'date-fns'
 
 const dayOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 const day = dayOfWeek[getDay(date)]
+
+import { google, type CalendarEvent } from 'calendar-link'
+const startTime = structuredClone(date).setHours(timeFrom.hr, timeFrom.mn)
+const endTime = structuredClone(date).setHours(timeTo.hr, timeTo.mn)
+const calendarEvent: CalendarEvent = {
+    title: "Flow vol." + nVol,
+    description: "オーディオビジュアルイベント『Flow』の第" + nVol + "回。\n" + `https://flow-fellow.net/events/vol${nVol}\/`,
+    start: startTime,
+    end: endTime,
+    location: placeAddr ? place1 + ', ' + placeAddr : place1
+}
+
+const gCalendarLink = google(calendarEvent)
 
 ---
 
@@ -49,6 +63,9 @@ const day = dayOfWeek[getDay(date)]
                 {hashtag}
             </li>
         </ul>
+        <div class="calendar">
+            <a href=`${gCalendarLink}` class="inline-block mt-3 p-2 border rounded-md">Add to Google Calendar</a>
+        </div>
     </div>
 
     <div class="
@@ -94,5 +111,9 @@ const day = dayOfWeek[getDay(date)]
     .info ul li:last-child{
         font-size: 1.125rem;
         line-height: 1.75rem;
+    }
+
+    div.calendar{
+        text-align: end;
     }
 </style>
