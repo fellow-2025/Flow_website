@@ -27,21 +27,21 @@ export default () => {
         if(!canvRef.current) return
 
 
-        // RENDERER & CAMERA SETUP
-
+        //  RENDERER & CAMERA SETUP
+        // ----------------------------------
         const rndr = new THR.WebGLRenderer({
             canvas: canvRef.current,
         })
         
-
         // create camera with temporal aspect ratio
         const cam = new THR.OrthographicCamera()
         cam.position.set(0, 0, -1)
+        // setup and rotate camera parent
+        const camParent = new THR.Group().add(cam)
+        camParent.rotateY(45)
+        camParent.rotateX(30)
 
-
-        // fit size
-        let resizeTimeout = NaN
-
+        // resize support
         {
             const vv = window.visualViewport
             if (vv){
@@ -51,18 +51,24 @@ export default () => {
             }
         }
         
+        // fit camera size
         initialize(rndr, cam)
         
 
-        // ADD OBJECTS
-
+        //  SCENE SETUP
+        // ----------------------
         const scn = new THR.Scene()
-        initScene(scn)
+        initScene(scn) // background color etc.
 
-        // RENDER LOOP
+
+        //  RENDER LOOP
+        // ----------------------
+        const startedAt = Date.now()
 
         let fr = 0
         const tick = () => {
+            const globalTime = Date.now() - startedAt
+
             fr++
 
             rndr.render(scn, cam)
