@@ -1,6 +1,8 @@
 import * as React from 'react'
 import * as THR from 'three'
 
+import initScene from './InitScene'
+
 const initialize = (rndr: THR.WebGLRenderer, cam: THR.OrthographicCamera) => {
     const vv = window.visualViewport
 
@@ -29,12 +31,12 @@ export default () => {
 
         const rndr = new THR.WebGLRenderer({
             canvas: canvRef.current,
-            alpha: true
         })
         
-        
+
         // create camera with temporal aspect ratio
         const cam = new THR.OrthographicCamera()
+        cam.position.set(0, 0, -1)
 
 
         // fit size
@@ -55,13 +57,15 @@ export default () => {
         // ADD OBJECTS
 
         const scn = new THR.Scene()
-
+        initScene(scn)
 
         // RENDER LOOP
 
         let fr = 0
         const tick = () => {
             fr++
+
+            rndr.render(scn, cam)
 
             requestAnimationFrame(tick)
         }
