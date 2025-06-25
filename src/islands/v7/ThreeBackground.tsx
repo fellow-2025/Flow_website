@@ -2,8 +2,25 @@ import * as React from 'react'
 import * as THR from 'three'
 
 import initScene from './InitScene'
+import { Props3d } from './Props'
+import { d2r } from './utility'
 
-const initialize = (rndr: THR.WebGLRenderer, cam: THR.OrthographicCamera) => {
+// const initialize = (rndr: THR.WebGLRenderer, cam: THR.OrthographicCamera) => {
+//     const vv = window.visualViewport
+
+//     const w = vv ? vv.width : window.innerWidth
+//     const h = vv ? vv.height : window.innerHeight
+
+//     rndr.setSize(w, h)
+
+//     cam.left =      -w/2
+//     cam.right =      w/2
+//     cam.top =       -h/2
+//     cam.bottom =     h/2
+//     cam.updateProjectionMatrix()
+// }
+
+const initialize = (rndr: THR.WebGLRenderer, cam: THR.PerspectiveCamera) => {
     const vv = window.visualViewport
 
     const w = vv ? vv.width : window.innerWidth
@@ -11,10 +28,7 @@ const initialize = (rndr: THR.WebGLRenderer, cam: THR.OrthographicCamera) => {
 
     rndr.setSize(w, h)
 
-    cam.left =      -w/2
-    cam.right =      w/2
-    cam.top =       -h/2
-    cam.bottom =     h/2
+    cam.aspect = w / h
     cam.updateProjectionMatrix()
 }
 
@@ -34,12 +48,17 @@ export default () => {
         })
         
         // create camera with temporal aspect ratio
-        const cam = new THR.OrthographicCamera()
-        cam.position.set(0, 0, -1)
+        // const cam = new THR.OrthographicCamera()
+        const cam = new THR.PerspectiveCamera(45, 1 / 1)
+        cam.position.set(0, 0, 10)
         // setup and rotate camera parent
         const camParent = new THR.Group().add(cam)
-        camParent.rotateY(45)
-        camParent.rotateX(30)
+        camParent.position.set(0, 0, 0)
+        camParent.rotateY(d2r(45))
+        camParent.rotateX(d2r(-30))
+
+        const camOrigin = new THR.Group()
+        camOrigin.add(camParent)
 
         // resize support
         {
@@ -60,22 +79,42 @@ export default () => {
         const scn = new THR.Scene()
         initScene(scn) // background color etc.
 
+        scn.add(camOrigin)
+
+        // DEBUG
+        const obj = new Props3d(scn, 'cart_draco', 3, 1)
+
+        const axesHelper = new THR.AxesHelper( 1000 );
+        scn.add( axesHelper );
 
         //  RENDER LOOP
         // ----------------------
-        const startedAt = Date.now()
+        const startedAt = Date.now() / 1000
         let lastTime = 0
 
         let fr = 0
         const tick = () => {
-            const globalTime = Date.now() - startedAt
+            const globalTime = (Date.now() / 1000) - startedAt
             const deltaTime = globalTime - lastTime
             lastTime = globalTime
 
-            fr++
+            obj.tick(fr, globalTime, deltaTime)
+
+            // camOrigin.rotateY(d2r(-.3))
+            // console.log(camParent.rotation.y)
 
             rndr.render(scn, cam)
 
+            if (fr % 360 == 0){
+                const camPos = new THR.Vector3()
+                const objPos = new THR.Vector3()
+                console.log('cam: ' + v3str(cam.getWorldPosition(camPos)))
+                if (obj.object){
+                    console.log('obj: ' + v3str(obj.object.getWorldPosition(objPos)))
+                }
+            }
+
+            fr++
             requestAnimationFrame(tick)
         }
 
@@ -89,3 +128,5 @@ export default () => {
         <canvas id='threeCanv' ref={canvRef} className='fixed -z-10'></canvas>
     )
 }
+
+const v3str = (v: THR.Vector3) => `${v.x}, ${v.y}, ${v.z}`
