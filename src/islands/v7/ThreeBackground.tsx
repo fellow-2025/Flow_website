@@ -3,6 +3,7 @@ import * as THR from 'three'
 
 import initScene from './InitScene'
 import { Props3d } from './Props'
+import { GrassManager } from './Grass'
 import { d2r } from './utility'
 
 // const initialize = (rndr: THR.WebGLRenderer, cam: THR.OrthographicCamera) => {
@@ -32,7 +33,7 @@ const initialize = (rndr: THR.WebGLRenderer, cam: THR.PerspectiveCamera) => {
     cam.updateProjectionMatrix()
 }
 
-export default () => {
+export const ThreeBackground = () => {
     // what is this
     const canvRef = React.useRef<HTMLCanvasElement | null>(null)
 
@@ -81,8 +82,7 @@ export default () => {
 
         scn.add(camOrigin)
 
-        // DEBUG
-        const obj = new Props3d(scn, 'cart_draco', 3, 1)
+        const grassMgr = new GrassManager(scn, 30, 3, .2, new THR.Vector2(10, 10))
 
         const axesHelper = new THR.AxesHelper( 1000 );
         scn.add( axesHelper );
@@ -98,21 +98,9 @@ export default () => {
             const deltaTime = globalTime - lastTime
             lastTime = globalTime
 
-            obj.tick(fr, globalTime, deltaTime)
-
-            // camOrigin.rotateY(d2r(-.3))
-            // console.log(camParent.rotation.y)
+            grassMgr.tick(fr, globalTime, deltaTime)
 
             rndr.render(scn, cam)
-
-            if (fr % 360 == 0){
-                const camPos = new THR.Vector3()
-                const objPos = new THR.Vector3()
-                console.log('cam: ' + v3str(cam.getWorldPosition(camPos)))
-                if (obj.object){
-                    console.log('obj: ' + v3str(obj.object.getWorldPosition(objPos)))
-                }
-            }
 
             fr++
             requestAnimationFrame(tick)

@@ -38,10 +38,8 @@ export abstract class ItHappyObj {
         this.localTime += deltaTime
 
         if (this.localTime < this.spawnLengthSecs){
-            // console.log('spawn')
             this.spawnAnim(globalTime, deltaTime)
         } else {
-            // console.log('visible')
             this.update(globalFrame, globalTime, deltaTime)
         }
     }
@@ -82,7 +80,6 @@ export abstract class ItHappyObj {
             // マテリアルの置き換え
             glScene.traverse((child) => {
                 if ((child as THREE.Mesh).isMesh) {
-                    console.log('mesh')
                     const mesh = child as THREE.Mesh
                     // mesh.material = ItHappyObj.material
 
@@ -90,7 +87,7 @@ export abstract class ItHappyObj {
                 }
             })
 
-            meshes.forEach(e => {e.rotateX(90 * (Math.PI / 180)); this.object.add(e)})
+            meshes.forEach(e => this.object.add(e))
             scene.add(this.object)
 
             this.isMeshReady = true
