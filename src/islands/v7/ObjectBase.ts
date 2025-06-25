@@ -4,9 +4,6 @@ import { DRACOLoader, GLTFLoader } from 'three/examples/jsm/Addons.js'
 import { lerpF, easeOutQuint } from './utility'
 
 export abstract class ItHappyObj {
-    static material: THREE.Material
-    static texture: THREE.Texture
-    static isSharedResourceReady = false
 
     public object: THREE.Group
     private isMeshReady = false
@@ -26,9 +23,6 @@ export abstract class ItHappyObj {
 
         this.object = new THREE.Group()
 
-        // if (!ItHappyObj.isSharedResourceReady) {
-        //     ItHappyObj.initSharedResources()
-        // }
         this.loadModel(modelName, scene)
     }
 
@@ -54,18 +48,6 @@ export abstract class ItHappyObj {
 
     protected abstract update(globalFrame: number, globalTime: number, deltaTime: number): void
 
-    static async initSharedResources() {
-        // 共通テクスチャとマテリアルの初期化
-        const tex = new THREE.TextureLoader().load('/images/textures/ithappy.png')
-        tex.flipY = false
-        ItHappyObj.texture = tex
-        ItHappyObj.material = new THREE.MeshToonMaterial({
-            map: ItHappyObj.texture,
-            color: 0xffffff
-        })
-        ItHappyObj.isSharedResourceReady = true
-    }
-
     private loadModel(modelName: string, scene: THREE.Scene) {
         const loader = new GLTFLoader()
         const dracoLoader = new DRACOLoader()
@@ -77,11 +59,9 @@ export abstract class ItHappyObj {
 
             const meshes: THREE.Mesh[] = []
 
-            // マテリアルの置き換え
             glScene.traverse((child) => {
                 if ((child as THREE.Mesh).isMesh) {
                     const mesh = child as THREE.Mesh
-                    // mesh.material = ItHappyObj.material
 
                     meshes.push(mesh)
                 }
