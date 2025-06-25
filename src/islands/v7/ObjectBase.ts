@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { DRACOLoader, GLTFLoader } from 'three/examples/jsm/Addons.js'
 
-export default class ItHappyObj {
+abstract class ItHappyObj {
     static material: THREE.MeshToonMaterial
     static texture: THREE.Texture
     static initialized = false
@@ -14,6 +14,8 @@ export default class ItHappyObj {
         }
         this.loadModel(modelName)
     }
+
+    public abstract tick(globalFrame: number, globalTime: number): void
 
     static initSharedResources() {
         // 共通テクスチャとマテリアルの初期化
