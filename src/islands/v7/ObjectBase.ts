@@ -26,9 +26,9 @@ export abstract class ItHappyObj {
 
         this.object = new THREE.Group()
 
-        if (!ItHappyObj.isSharedResourceReady) {
-            ItHappyObj.initSharedResources()
-        }
+        // if (!ItHappyObj.isSharedResourceReady) {
+        //     ItHappyObj.initSharedResources()
+        // }
         this.loadModel(modelName, scene)
     }
 

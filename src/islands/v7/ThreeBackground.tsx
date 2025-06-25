@@ -5,6 +5,8 @@ import initScene from './InitScene'
 import { Props3d } from './Props'
 import { GrassManager } from './Grass'
 import { d2r } from './utility'
+import { PropObjManager } from './SceneObjects'
+import { addPointerHandler, cleanupPointerHandler } from './WindowEvents'
 
 // const initialize = (rndr: THR.WebGLRenderer, cam: THR.OrthographicCamera) => {
 //     const vv = window.visualViewport
@@ -31,6 +33,34 @@ const initialize = (rndr: THR.WebGLRenderer, cam: THR.PerspectiveCamera) => {
 
     cam.aspect = w / h
     cam.updateProjectionMatrix()
+}
+
+const disposeScene = (scene: THR.Scene) => {
+    scene.traverse((obj) => {
+        // Mesh系オブジェクト
+        if ((obj as THR.Mesh).geometry) {
+            (obj as THR.Mesh).geometry.dispose()
+        }
+
+        if ((obj as THR.Mesh).material) {
+            const mat = (obj as THR.Mesh).material
+            if (Array.isArray(mat)) {
+                mat.forEach(m => m.dispose?.())
+            } else {
+                mat.dispose?.()
+            }
+        }
+
+        // 自作で貼り付けたテクスチャがある場合
+        if ((obj as any).material?.map) {
+            (obj as any).material.map.dispose?.()
+        }
+    })
+
+    // 子オブジェクトを全削除
+    while (scene.children.length > 0) {
+        scene.remove(scene.children[0])
+    }
 }
 
 export const ThreeBackground = () => {
@@ -82,15 +112,33 @@ export const ThreeBackground = () => {
 
         scn.add(camOrigin)
 
+        // ObjectBaseにまずdisposeを作るぞ
+        // ほんでmanager系の基底クラスを作り、それを回して配下のオブジェクトをdisposeできるようにするぞ
         const grassMgr = new GrassManager(scn, 30, 3, .2, new THR.Vector2(10, 10))
+        const sceneObjMgr = new PropObjManager(scn, 2)
 
         const axesHelper = new THR.AxesHelper( 1000 );
         scn.add( axesHelper );
+
+        //  POINTER
+        // ------------------
+        // TODO: できたらマウスカーソルとかタッチに応じてオブジェクトが揺れたりするヤツを追加する
+        // グローバルに一回wposを計算した後、各updateにそれをフィードするとかでもいいかもしれん
+        // addPointerHandler(rndr, cam)
 
         //  RENDER LOOP
         // ----------------------
         const startedAt = Date.now() / 1000
         let lastTime = 0
+
+        if (import.meta.hot) {
+            import.meta.hot.dispose(_ => {
+                // grassMgr.dispose()
+
+                rndr.dispose()
+                disposeScene(scn)
+            })
+        }
 
         let fr = 0
         const tick = () => {
@@ -99,6 +147,7 @@ export const ThreeBackground = () => {
             lastTime = globalTime
 
             grassMgr.tick(fr, globalTime, deltaTime)
+            sceneObjMgr.tick(fr, globalTime, deltaTime)
 
             rndr.render(scn, cam)
 
@@ -109,7 +158,11 @@ export const ThreeBackground = () => {
         tick()
 
         // Xx_what is this_xX ("resource release on component unload" by chatGPT)
-        return () => rndr.dispose()
+        return () => {
+            rndr.dispose()
+            // grassMgr.dispose()
+            disposeScene(scn)
+        }
     })
 
     return (
