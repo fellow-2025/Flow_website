@@ -64,10 +64,13 @@ export default () => {
         //  RENDER LOOP
         // ----------------------
         const startedAt = Date.now()
+        let lastTime = 0
 
         let fr = 0
         const tick = () => {
             const globalTime = Date.now() - startedAt
+            const deltaTime = globalTime - lastTime
+            lastTime = globalTime
 
             fr++
 
