@@ -55,7 +55,7 @@ export abstract class ItHappyObj {
     private loadModel(modelName: string, scene: THREE.Scene) {
         const loader = new GLTFLoader()
         const dracoLoader = new DRACOLoader()
-        dracoLoader.setDecoderPath('/lib/draco/')
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/')
         loader.setDRACOLoader(dracoLoader)
 
         loader.load(`/models/v7/${modelName}.glb`, (gltf) => {
