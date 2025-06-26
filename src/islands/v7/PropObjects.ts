@@ -143,7 +143,7 @@ export class PropObjManager implements IObjectManager {
         this.layout(
             "deer",
             .6,
-            v2(.8, 1.7),
+            v2(.4, 1.7),
             v3(0, 60, 0)
         )
 
