@@ -102,8 +102,8 @@ export const ThreeBackground = () => {
         objMgrs.push(grassMgr, sceneObjMgr)
 
         // DEBUG
-        const axesHelper = new THR.AxesHelper( 1000 );
-        scn.add( axesHelper );
+        // const axesHelper = new THR.AxesHelper( 1000 );
+        // scn.add( axesHelper );
 
         //  CLICK / TOUCH
         // ------------------
