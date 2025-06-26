@@ -5,8 +5,9 @@ import initScene from './InitScene'
 import { Props3d } from './Props'
 import { GrassManager } from './Grass'
 import { d2r } from './utility'
-import { PropObjManager } from './SceneObjects'
+import { PropObjManager } from './PropObjects'
 import { addPointerHandler, cleanupPointerHandler } from './WindowEvents'
+import { type IObjectManager } from './ObjectManger'
 
 // const initialize = (rndr: THR.WebGLRenderer, cam: THR.OrthographicCamera) => {
 //     const vv = window.visualViewport
@@ -35,33 +36,13 @@ const initialize = (rndr: THR.WebGLRenderer, cam: THR.PerspectiveCamera) => {
     cam.updateProjectionMatrix()
 }
 
-const disposeScene = (scene: THR.Scene) => {
-    scene.traverse((obj) => {
-        // Mesh系オブジェクト
-        if ((obj as THR.Mesh).geometry) {
-            (obj as THR.Mesh).geometry.dispose()
-        }
+const disposeScene = (rndr: THR.WebGLRenderer, managers: IObjectManager[]) => {
+    managers.forEach(e => e.dispose())
 
-        if ((obj as THR.Mesh).material) {
-            const mat = (obj as THR.Mesh).material
-            if (Array.isArray(mat)) {
-                mat.forEach(m => m.dispose?.())
-            } else {
-                mat.dispose?.()
-            }
-        }
-
-        // 自作で貼り付けたテクスチャがある場合
-        if ((obj as any).material?.map) {
-            (obj as any).material.map.dispose?.()
-        }
-    })
-
-    // 子オブジェクトを全削除
-    while (scene.children.length > 0) {
-        scene.remove(scene.children[0])
-    }
+    rndr.dispose()
 }
+
+
 
 export const ThreeBackground = () => {
     // what is this
@@ -71,7 +52,6 @@ export const ThreeBackground = () => {
     React.useEffect(() => {
         if(!canvRef.current) return
 
-
         //  RENDERER & CAMERA SETUP
         // ----------------------------------
         const rndr = new THR.WebGLRenderer({
@@ -80,24 +60,26 @@ export const ThreeBackground = () => {
         
         // create camera with temporal aspect ratio
         // const cam = new THR.OrthographicCamera()
-        const cam = new THR.PerspectiveCamera(45, 1 / 1)
+        const cam = new THR.PerspectiveCamera(40, 1 / 1)
         cam.position.set(0, 0, 10)
         // setup and rotate camera parent
         const camParent = new THR.Group().add(cam)
         camParent.position.set(0, 0, 0)
-        camParent.rotateY(d2r(45))
-        camParent.rotateX(d2r(-30))
+        // camParent.rotateY(d2r(0))
+        camParent.rotateX(d2r(-45))
 
         const camOrigin = new THR.Group()
         camOrigin.add(camParent)
+
+        const resizeHandler = () => initialize(rndr, cam)
 
         // resize support
         {
             const vv = window.visualViewport
             if (vv){
-                vv.addEventListener("resize", _ => initialize(rndr, cam))
+                vv.addEventListener("resize", resizeHandler)
             }else{
-                window.addEventListener('resize', _ => initialize(rndr, cam))
+                window.addEventListener('resize', resizeHandler)
             }
         }
         
@@ -110,64 +92,97 @@ export const ThreeBackground = () => {
         const scn = new THR.Scene()
         initScene(scn) // background color etc.
 
-        scn.add(camOrigin)
+        scn.add(camOrigin)        
 
-        // ObjectBaseにまずdisposeを作るぞ
-        // ほんでmanager系の基底クラスを作り、それを回して配下のオブジェクトをdisposeできるようにするぞ
-        const grassMgr = new GrassManager(scn, 30, 3, .2, new THR.Vector2(10, 10))
-        const sceneObjMgr = new PropObjManager(scn, 2)
+        let objMgrs: IObjectManager[] = []
 
+        const grassMgr = new GrassManager(scn, 120, 1, .2, new THR.Vector2(15, 15))
+        const sceneObjMgr = new PropObjManager(scn, 1)
+
+        objMgrs.push(grassMgr, sceneObjMgr)
+
+        // DEBUG
         const axesHelper = new THR.AxesHelper( 1000 );
         scn.add( axesHelper );
 
-        //  POINTER
+        //  CLICK / TOUCH
         // ------------------
         // TODO: できたらマウスカーソルとかタッチに応じてオブジェクトが揺れたりするヤツを追加する
-        // グローバルに一回wposを計算した後、各updateにそれをフィードするとかでもいいかもしれん
+        // グローバルに一回wposを計算した後、各updateにそれをフィードするとかで
         // addPointerHandler(rndr, cam)
 
         //  RENDER LOOP
         // ----------------------
+        let running = true
+        let frId: number
+
+        //  HMR dispose
+        // ----------------------
+        if (import.meta.hot) {
+            import.meta.hot.dispose(() => {
+                running = false
+                if (frId) cancelAnimationFrame(frId)
+
+                disposeScene(rndr, objMgrs)
+
+                objMgrs = []
+
+                rndr.dispose()
+            });
+        }
+
         const startedAt = Date.now() / 1000
         let lastTime = 0
 
-        if (import.meta.hot) {
-            import.meta.hot.dispose(_ => {
-                // grassMgr.dispose()
-
-                rndr.dispose()
-                disposeScene(scn)
-            })
-        }
-
         let fr = 0
+
+        let lastScroll = 0
+        let scrollVelocity = 0
+        const damping = 0.9
+
         const tick = () => {
+            if (!running) return
+
             const globalTime = (Date.now() / 1000) - startedAt
             const deltaTime = globalTime - lastTime
             lastTime = globalTime
 
-            grassMgr.tick(fr, globalTime, deltaTime)
-            sceneObjMgr.tick(fr, globalTime, deltaTime)
+            const curScroll = window.scrollY
+            const rawScrollDelta = lastScroll - curScroll
+            lastScroll = curScroll
+
+            // ダンピング処理
+            scrollVelocity = scrollVelocity * damping + rawScrollDelta * (1 - damping)
+            const scrollDelta = scrollVelocity
+
+            objMgrs.forEach(e => e.tick(fr, globalTime, deltaTime, scrollDelta))
 
             rndr.render(scn, cam)
 
             fr++
-            requestAnimationFrame(tick)
+            frId = requestAnimationFrame(tick)
         }
 
         tick()
 
-        // Xx_what is this_xX ("resource release on component unload" by chatGPT)
         return () => {
-            rndr.dispose()
-            // grassMgr.dispose()
-            disposeScene(scn)
+            running = false
+            if (frId) cancelAnimationFrame(frId)
+
+            disposeScene(rndr, objMgrs)
+
+            objMgrs = []
+
+            const vv = window.visualViewport;
+            if (vv) {
+                vv.removeEventListener("resize", resizeHandler);
+            } else {
+                window.removeEventListener("resize", resizeHandler);
+            }
         }
-    })
+    }, [])
 
     return (
         <canvas id='threeCanv' ref={canvRef} className='fixed -z-10'></canvas>
     )
 }
-
-const v3str = (v: THR.Vector3) => `${v.x}, ${v.y}, ${v.z}`

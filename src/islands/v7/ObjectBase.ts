@@ -14,6 +14,8 @@ export abstract class ItHappyObj {
     private targetScale: number
     private scale: number
 
+    private scene: THREE.Scene
+
     constructor(scene: THREE.Scene, modelName: string, spawnLen: number, targetScale: number) {
         this.spawnLengthSecs = spawnLen
         this.targetScale = targetScale
@@ -23,10 +25,12 @@ export abstract class ItHappyObj {
 
         this.object = new THREE.Group()
 
+        this.scene = scene
+
         this.loadModel(modelName, scene)
     }
 
-    public tick(globalFrame: number, globalTime: number, deltaTime: number) {
+    public tick(globalFrame: number, globalTime: number, deltaTime: number, scrollDelta: number) {
         if (! this.isMeshReady) return
 
         this.localTime += deltaTime
@@ -34,7 +38,7 @@ export abstract class ItHappyObj {
         if (this.localTime < this.spawnLengthSecs){
             this.spawnAnim(globalTime, deltaTime)
         } else {
-            this.update(globalFrame, globalTime, deltaTime)
+            this.update(globalFrame, globalTime, deltaTime, scrollDelta)
         }
     }
 
@@ -46,7 +50,7 @@ export abstract class ItHappyObj {
         this.object.scale.set(this.scale, this.scale, this.scale)
     }
 
-    protected abstract update(globalFrame: number, globalTime: number, deltaTime: number): void
+    protected abstract update(globalFrame: number, globalTime: number, deltaTime: number, scrollDelta: number): void
 
     private loadModel(modelName: string, scene: THREE.Scene) {
         const loader = new GLTFLoader()
@@ -71,8 +75,33 @@ export abstract class ItHappyObj {
             scene.add(this.object)
 
             this.isMeshReady = true
+
+            dracoLoader.dispose()
         }, undefined, (err) => {
+            dracoLoader.dispose()
+
             console.error(`モデル読み込み失敗: ${modelName}`, err)
         })
+    }
+
+    public dispose(): void {
+        if (this.object.parent) {
+            this.object.parent.remove(this.object);
+        }
+        this.object.traverse((child: any) => {
+            if (child.geometry) child.geometry.dispose?.();
+            if (child.material) {
+                if (Array.isArray(child.material)) {
+                    child.material.forEach((m: any) => {
+                        // テクスチャも解放
+                        if (m.map) m.map.dispose?.();
+                        m.dispose?.();
+                    });
+                } else {
+                    if (child.material.map) child.material.map.dispose?.();
+                    child.material.dispose?.();
+                }
+            }
+        });
     }
 }
