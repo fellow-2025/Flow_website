@@ -45,49 +45,56 @@ export class PropObjManager implements IObjectManager {
         )
 
         this.layout(
+            "house",
+            .6,
+            v2(-4, -2),
+            v3(0, -70, 0)
+        )
+
+        this.layout(
             "big_fabulous_tree",
             .3,
-            v2(-2, -2),
+            v2(-1, -2),
             v3(0, 0, 0)
         )
 
         this.layout(
             "tree",
             .4,
-            v2(0, -4),
+            v2(1, -4),
             v3(0, 90, 0)
         )
         this.layout(
             "tree",
             .2,
-            v2(-1, 3),
+            v2(-1.5, 3),
             v3(0, 50, 0)
         )
 
         this.layout(
             "fir",
             .2,
-            v2(-.2, 4),
+            v2(-.7, 4),
             v3(0, 40, 0)
         )
         this.layout(
             "fir",
             .2,
-            v2(-1.5, 2),
+            v2(-2, 2),
             v3(0, 40, 0)
         )
 
         this.layout(
             "cart",
             .4,
-            v2(-.4, -2),
+            v2(-.2, -1.5),
             v3(0, 60, -10)
         )
 
         this.layout(
             "fabulous_mushroom",
              1,
-            v2(-1.8, -1),
+            v2(-1.6, -1),
             v3(0, -110, 0)
         )
 
@@ -124,6 +131,62 @@ export class PropObjManager implements IObjectManager {
             .7,
             v2(.2, -.7),
             v3(0, -90, 0)
+        )
+
+        this.layout(
+            "penguin",
+            .8,
+            v2(-.6, .3),
+            v3(0, -120, 0)
+        )
+
+        this.layout(
+            "deer",
+            .6,
+            v2(.8, 1.7),
+            v3(0, 60, 0)
+        )
+
+        this.layout(
+            "dog",
+            .8,
+            v2(1, -.6),
+            v3(0, 120, 0)
+        )
+
+        this.layout(
+            "barrel",
+            .6,
+            v2(3.6, 3),
+            v3(0, 0, 0)
+        )
+        this.layout(
+            "penguin",
+            .5,
+            v2(3.6, 3),
+            v3(0, 130, 0),
+            .45
+        )
+
+        this.layout(
+            "tree",
+            .4,
+            v2(4, 0),
+            v3(0, 60, 0)
+        )
+
+        this.layout(
+            "fir",
+            .4,
+            v2(-4, 2),
+            v3(0, 40, 0)
+        )
+
+        this.layout(
+            "fabulous_mushroom",
+            2,
+            v2(2.3, 3.3),
+            v3(0, 30, 0)
         )
     }
 

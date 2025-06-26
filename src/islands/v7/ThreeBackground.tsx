@@ -65,7 +65,7 @@ export const ThreeBackground = () => {
         // setup and rotate camera parent
         const camParent = new THR.Group().add(cam)
         camParent.position.set(0, 0, 0)
-        // camParent.rotateY(d2r(0))
+        camParent.rotateY(d2r(-15))
         camParent.rotateX(d2r(-45))
 
         const camOrigin = new THR.Group()
