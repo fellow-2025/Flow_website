@@ -17,6 +17,8 @@ import { parse as dfParse, format as dfFormat, getYear as getDfYr, getMonth as g
 const vol = 7
 const dateTime = dfParse('2025/7/15', 'yyyy/M/dd', new Date())
 
+const comment = "<!-- we can't show you the performers yet. stay tuned, you curious geek. -->"
+
 --- 
 
 <Layout
@@ -53,7 +55,7 @@ const dateTime = dfParse('2025/7/15', 'yyyy/M/dd', new Date())
                         近日公開。ぜひお楽しみに。
                     </p>
 
-                    <!-- we can't show you the performers yet. stay tuned, you curious geek. -->
+                    <Fragment set:html={comment}>
 
                     <!-- <div class="mx-5">
                         <V7Performers />
