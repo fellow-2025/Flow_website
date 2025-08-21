@@ -1,0 +1,73 @@
+---
+import '@fontsource/source-sans-pro'
+import { string } from 'astro:schema';
+
+import { type simplePalette } from '../types';
+
+interface Props {
+	title: string;
+	desc: string;
+	favicon: string;
+	colors: simplePalette
+}
+
+const { title, desc, favicon, colors } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={desc} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href={favicon} />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style>
+	html{
+		background-color: #09090a;
+	}
+</style>
+
+<style is:global>
+	@font-face {
+		font-family: MaboroshiNoNijimi;
+		src: url('/fonts/Nijimi/nijimi.woff');
+	}
+</style>
+
+<style define:vars={colors}>
+	body {
+        --sb-track-color: var(--scrollTrack);
+        --sb-thumb-color: var(--scrollThumb);
+        --sb-size: 5px;
+    }
+
+    body::-webkit-scrollbar {
+    width: var(--sb-size)
+    }
+
+    body::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 3px;
+    }
+
+    body::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 3px;
+    
+    }
+
+    @supports not selector(::-webkit-scrollbar) {
+    body {
+        scrollbar-color: var(--sb-thumb-color)
+                        var(--sb-track-color);
+    }
+    }
+</style>
