@@ -152,11 +152,8 @@ import { Icon } from 'astro-icon/components'
     }
 
     .calendar-button-color{
-        color: var(--bg);
-        background-color: color-mix(
-            in srgb,
-            var(--accent) 100%, transparent calc(100% - var(--tw-bg-opacity, 1) * 100%)
-        );
+        color: var(--txt);
+        border: 1px dashed var(--txt);
     }
 
     .info ul{

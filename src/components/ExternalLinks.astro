@@ -1,7 +1,7 @@
 ---
 import Card from './Card.astro'
 
-import { YouTube } from "astro-embed"
+import BrandIconLink from './BrandIconLink.astro'
 
 interface Props {
     dark? : boolean
@@ -10,13 +10,30 @@ interface Props {
 const { dark } = Astro.props
 ---
 
-<div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 px-2">
-    <Card
+<div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-4 gap-y-10 px-2">
+
+    <BrandIconLink url='https://discord.gg/XCqhqjks9c' iconName='fa7-brands:discord' />
+    <BrandIconLink url='https://x.com/flow_fellow/' iconName='fa7-brands:x-twitter' />
+    <BrandIconLink url='https://instagram.com/flow._.fellow/' iconName='fa7-brands:instagram' />
+
+    <!-- <Card
     title='Discordサーバー'
     body='開催中のチャット交流、出演者募集、Flowの開催告知などをこちらで行います。是非ご参加ください！'
     href='https://discord.gg/XCqhqjks9c'
     dark = {dark}>
-    </Card>
+    </Card> -->
+
+    <!-- <Card
+    title='Discordサーバー'
+    body='開催中のチャット交流、出演者募集、Flowの開催告知などをこちらで行います。是非ご参加ください！'
+    href='https://discord.gg/XCqhqjks9c'
+    dark = {dark}>
+    </Card> -->
+
+    <!-- <div class="flex">
+        <BrandIconLink url='https://x.com/flow_fellow/' iconName='fa7-brands:x-twitter' />
+        <BrandIconLink url='https://instagram.com/flow_fellow/' iconName='fa7-brands:instagram' />
+    </div> -->
 
     <!-- <YouTube id="dQw4w9WgXcQ" /> -->
 
