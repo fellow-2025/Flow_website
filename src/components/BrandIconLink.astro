@@ -10,29 +10,5 @@ const { url, iconName } = Astro.props
 ---
 
 <a href={url} class="flex justify-center">
-    <Icon name={iconName} class="w-1/6 h-auto max-w-8 rotate-once" />
+    <Icon name={iconName} class="w-1/6 h-auto max-w-8" />
 </a>
-
-<style>
-    .rotate-once {
-        display: inline-block;
-        transform-origin: 50% 50%;
-        will-change: transform;
-    }
-
-    @keyframes spin-1turn {
-        from { transform: rotate(0turn); }
-        to   { transform: rotate(1turn); }
-    }
-
-    .rotate-once:hover { 
-        animation: spin-1turn 500ms cubic-bezier(0.16, 1, 0.3, 1) 1 both;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .rotate-once.is-playing,
-        .rotate-once:hover {
-            animation: none !important;
-        }
-    }
-</style>
