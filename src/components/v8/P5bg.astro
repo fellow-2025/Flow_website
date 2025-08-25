@@ -1,10 +1,10 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap" rel="stylesheet">
+
 <div id="p5">
     <canvas></canvas>
 </div>
-
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap');
-</style>
 
 <script>
     import p5 from "p5"
@@ -83,7 +83,6 @@
                 return INITIAL_WORD
             } else {
                 const words = Object.keys(transitions)
-                console.log(words)
                 return words[Math.floor(Math.random() * words.length)]
             }
         }
