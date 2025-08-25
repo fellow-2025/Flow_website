@@ -1,0 +1,244 @@
+<div id="p5">
+    <canvas></canvas>
+</div>
+
+<script>
+    import p5 from "p5"
+    import { buildTransitions, nextWord } from "./markov"
+    import { remap, getFontSize } from "./util"
+
+    const parent = document.getElementById('p5')
+    const canvas = parent?.querySelector('canvas')
+
+    const sentences = [
+        "Flow is an Audio Visual event by fellow",
+        "fellow derivers vibes of sound and lights to you through Flow",
+        "Flow welcomes various performers",
+        "Flow is an audio visual stream of motion",
+        "fellow travelers bring sound and image through Flow",
+        "Audio Visual is a way connects rhythm with color and pulse",
+        "Flow welcomes various creators on stage",
+        "Flow is a journey of lights and echoes",
+        "fellow makers share soundscapes in Flow",
+        "performers with new visions in sound and motion"
+        // "I am",
+        // "am I"
+    ]
+
+    const transitions = buildTransitions(sentences)
+
+
+    // -----------------
+    //  CONFIG
+
+    // SPACING & SIZING
+    const PADDING = 20
+    
+    const FONT_SIZE_RATIO = .01
+    const FONT_SIZE_MAX = 30
+    const FONT_SIZE_MIN = 10
+    let fontSize = 12
+    const LINE_HEIGHT = () => fontSize * 1.2
+    const PARAGARPH_MARGIN = () => fontSize * 2.5
+
+    // WORDS & SENTENCES
+    const INITIAL_WORD = "Flow"
+    const USE_INITIAL_WORD = false
+    let page: string[][] = [[INITIAL_WORD]] // paragraphs, words
+
+    const MIN_WORDS_IN_PARAGRAPH = 10
+    const MAX_WORDS_IN_PARAGRAPH = 30
+    const maxWordsInParagraph = () => MIN_WORDS_IN_PARAGRAPH + Math.floor(Math.random() * (MAX_WORDS_IN_PARAGRAPH - MIN_WORDS_IN_PARAGRAPH))
+
+    // STARTUP
+    const INITIAL_SLEEP_MSEC = 1000
+    const startedAt = Date.now()
+
+    // TYPING
+    const MIN_TYPE_INTVL_MSEC = 0
+    const MAX_TYPE_INTVL_MSEC = 1
+    let currentTypeInterval = MIN_TYPE_INTVL_MSEC + Math.random() * MAX_TYPE_INTVL_MSEC - MIN_TYPE_INTVL_MSEC
+
+    //  CONFIG
+    // -----------------
+
+
+    const sketch = (p: p5) => {
+        const onResize = (ev: Event) => {
+            p.resizeCanvas(document.documentElement.offsetWidth, document.documentElement.scrollHeight)
+            initTyper()
+        }
+
+        const initTyper = () => {
+            fontSize = Math.sqrt(p.width * p.height) * FONT_SIZE_RATIO
+            fontSize = getFontSize(Math.min(p.width, p.height))            
+
+            p.textSize(fontSize)
+        }
+
+        const getInitialWord = () => {
+            if (USE_INITIAL_WORD) {
+                return INITIAL_WORD
+            } else {
+                const words = Object.keys(transitions)
+                console.log(words)
+                return words[Math.floor(Math.random() * words.length)]
+            }
+        }
+
+        p.setup = () => {
+            if (!(parent && canvas)) {
+                throw new Error('parent or canvas was null!')
+            }
+
+            const docElem = document.documentElement
+
+            p.createCanvas(docElem.offsetWidth, docElem.scrollHeight, p.P2D, canvas)
+            p.textSize(fontSize)
+            p.textWrap(p.WORD)
+            p.fill("#2C2525")
+
+            initTyper()
+
+            const vv = window.visualViewport
+            if (vv) {
+                vv.addEventListener('resize', onResize)
+            } else {
+                window.addEventListener('resize', onResize)
+            }
+
+            docElem.addEventListener('resize', onResize)
+        }
+
+        let last = 0
+
+        let lastTyped = Date.now()
+        let charIdx = 0
+        let typed = false
+
+        let currentWord = ""
+
+        p.draw = () => {
+            p.background("#FAFFF3")
+
+            // performance check
+            const perfNow = performance.now()
+            const mspf = perfNow - last
+            const fps = 1000 / mspf
+            p.text("ftime: " + Math.round(mspf * 10000) / 10000, fontSize, fontSize)
+            p.text("fps: " + Math.round(fps * 10) / 10, fontSize * 8, fontSize)
+            last = perfNow
+
+            const now = Date.now()
+
+            if (now - startedAt < INITIAL_SLEEP_MSEC) {
+                lastTyped = Date.now()
+                return
+            }
+
+            // -----------------------
+            //  ADD NEW WORD 
+
+            if (typed) {
+                const currentParagraph = page[page.length - 1]
+                const currentWord = currentParagraph[currentParagraph.length - 1]
+                const newWord = nextWord(currentWord, transitions)
+
+                if (currentParagraph.length + 1 > maxWordsInParagraph()) { // check long paragraph first
+                    page.push([getInitialWord()])
+                } else {
+                    if (newWord) {
+                        currentParagraph.push(newWord) // add new word if available
+                    } else {
+                        page.push([getInitialWord()]) // or initialize new paragraph
+                    }
+                }
+
+                typed = false
+            }
+
+            //  ADD NEW WORD
+            // -----------------------
+            //  DRAW WORDS
+
+            let x = PADDING
+            let y = PADDING // text coordinates
+
+            // of cource i wanted to use forof but we have to determine last word...
+            for (let iPara=0; iPara < page.length; iPara++) {
+                const paragraph = page[iPara]
+                const isLastParagraph = iPara == page.length - 1
+
+                for (let iWrd=0; iWrd < paragraph.length; iWrd++) {
+                    const isLastWord = iWrd == paragraph.length - 1
+                    const isVeryLastWord = isLastParagraph && isLastWord // is current very last word?
+
+                    const word = paragraph[iWrd]
+                    const wordVisual = isVeryLastWord ? word.substring(0, charIdx) : word
+
+                    if (isVeryLastWord) currentWord = word
+
+                    const wordW = p.textWidth(word + ".")
+                    const wordEndAt = x + wordW
+
+                    // WORD-WRAP
+                    // break line if current word seems to exceed canvas width
+                    const exceeded = wordEndAt > p.width - PADDING
+                    if (exceeded) {
+                    x = PADDING
+                    y += LINE_HEIGHT()
+                    }
+
+                    p.text(wordVisual + (isLastWord && !isVeryLastWord ? "." : ""), x, y) // DRAW
+
+                    x += wordW // move carriage forward
+                
+                }
+
+                x = PADDING
+                y += PARAGARPH_MARGIN() // break paragraph
+            }
+
+            if (!typed && now - lastTyped > currentTypeInterval) { // type new character if enough time elapsed
+                currentTypeInterval = p.random(MIN_TYPE_INTVL_MSEC, MAX_TYPE_INTVL_MSEC)
+
+                charIdx++
+                lastTyped = Date.now()
+
+                if (charIdx > currentWord.length) { // get new word if current word fully typed
+                    typed = true
+                    charIdx = 0
+                }
+            }
+
+            // RESET PAGE
+            // reset page array if current word seems to exceed canvas height
+            if (y > p.height - PADDING){
+                x = PADDING
+                y = PADDING
+                page = [[getInitialWord()]]
+            }
+
+            //  DRAW WORDS
+            // ---------------------
+        }
+    }
+
+    if (parent != null) new p5(sketch, parent);
+</script>
+
+<style>
+    #p5{
+        position: relative;
+        /* position: fixed; */
+        /* left: 0;
+        top: 0; */
+        z-index: -10;
+    }
+
+    #p5 > canvas{
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+</style>
