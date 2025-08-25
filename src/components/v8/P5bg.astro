@@ -2,6 +2,10 @@
     <canvas></canvas>
 </div>
 
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap');
+</style>
+
 <script>
     import p5 from "p5"
     import { buildTransitions, nextWord } from "./markov"
@@ -35,8 +39,6 @@
     const PADDING = 20
     
     const FONT_SIZE_RATIO = .01
-    const FONT_SIZE_MAX = 30
-    const FONT_SIZE_MIN = 10
     let fontSize = 12
     const LINE_HEIGHT = () => fontSize * 1.2
     const PARAGARPH_MARGIN = () => fontSize * 2.5
@@ -46,8 +48,8 @@
     const USE_INITIAL_WORD = false
     let page: string[][] = [[INITIAL_WORD]] // paragraphs, words
 
-    const MIN_WORDS_IN_PARAGRAPH = 10
-    const MAX_WORDS_IN_PARAGRAPH = 30
+    const MIN_WORDS_IN_PARAGRAPH = 50
+    const MAX_WORDS_IN_PARAGRAPH = 200
     const maxWordsInParagraph = () => MIN_WORDS_IN_PARAGRAPH + Math.floor(Math.random() * (MAX_WORDS_IN_PARAGRAPH - MIN_WORDS_IN_PARAGRAPH))
 
     // STARTUP
@@ -55,8 +57,8 @@
     const startedAt = Date.now()
 
     // TYPING
-    const MIN_TYPE_INTVL_MSEC = 0
-    const MAX_TYPE_INTVL_MSEC = 1
+    const MIN_TYPE_INTVL_MSEC = 10
+    const MAX_TYPE_INTVL_MSEC = 100
     let currentTypeInterval = MIN_TYPE_INTVL_MSEC + Math.random() * MAX_TYPE_INTVL_MSEC - MIN_TYPE_INTVL_MSEC
 
     //  CONFIG
@@ -96,7 +98,8 @@
             p.createCanvas(docElem.offsetWidth, docElem.scrollHeight, p.P2D, canvas)
             p.textSize(fontSize)
             p.textWrap(p.WORD)
-            p.fill("#2C2525")
+            p.textFont("Cutive Mono")
+            p.fill("#2C252577")
 
             initTyper()
 
