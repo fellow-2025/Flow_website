@@ -57,9 +57,14 @@
     const startedAt = Date.now()
 
     // TYPING
-    const MIN_TYPE_INTVL_MSEC = 10
-    const MAX_TYPE_INTVL_MSEC = 100
-    let currentTypeInterval = MIN_TYPE_INTVL_MSEC + Math.random() * MAX_TYPE_INTVL_MSEC - MIN_TYPE_INTVL_MSEC
+    const MIN_CHARS_INTVL_MSEC = 50
+    const MAX_CHARS_INTVL_MSEC = 100
+    let currentTypeInterval = MIN_CHARS_INTVL_MSEC + Math.random() * (MAX_CHARS_INTVL_MSEC - MIN_CHARS_INTVL_MSEC)
+
+    const MIN_WORDS_INTVL_MSEC = 800
+    const MAX_WORDS_INTVL_MSEC = 1200
+    let currentWordInterval = MIN_WORDS_INTVL_MSEC + Math.random() * (MAX_WORDS_INTVL_MSEC - MIN_WORDS_INTVL_MSEC)
+
 
     //  CONFIG
     // -----------------
@@ -114,7 +119,8 @@
 
         let last = 0
 
-        let lastTyped = Date.now()
+        let lastCharTyped = Date.now()
+        let lastWordTyped = Date.now()
         let charIdx = 0
         let typed = false
 
@@ -127,14 +133,14 @@
             const perfNow = performance.now()
             const mspf = perfNow - last
             const fps = 1000 / mspf
-            p.text("ftime: " + Math.round(mspf * 10000) / 10000, fontSize, fontSize)
-            p.text("fps: " + Math.round(fps * 10) / 10, fontSize * 8, fontSize)
+            // p.text("ftime: " + Math.round(mspf * 10000) / 10000, fontSize, fontSize)
+            // p.text("fps: " + Math.round(fps * 10) / 10, fontSize * 8, fontSize)
             last = perfNow
 
             const now = Date.now()
 
             if (now - startedAt < INITIAL_SLEEP_MSEC) {
-                lastTyped = Date.now()
+                lastCharTyped = Date.now()
                 return
             }
 
@@ -201,13 +207,15 @@
                 y += PARAGARPH_MARGIN() // break paragraph
             }
 
-            if (!typed && now - lastTyped > currentTypeInterval) { // type new character if enough time elapsed
-                currentTypeInterval = p.random(MIN_TYPE_INTVL_MSEC, MAX_TYPE_INTVL_MSEC)
+            if (!typed && now - lastCharTyped > currentTypeInterval) { // type new character if enough time elapsed
+                currentTypeInterval = p.random(MIN_CHARS_INTVL_MSEC, MAX_CHARS_INTVL_MSEC)
 
-                charIdx++
-                lastTyped = Date.now()
+                charIdx = Math.min(charIdx + 1, currentWord.length)
+                lastCharTyped = Date.now()
 
-                if (charIdx > currentWord.length) { // get new word if current word fully typed
+                if (charIdx >= currentWord.length && now - lastWordTyped > currentWordInterval) { // get new word if current word fully typed
+                    lastWordTyped = now
+
                     typed = true
                     charIdx = 0
                 }
