@@ -41,9 +41,9 @@ const colors: simplePalette = {
         
     </div> -->
 
-    <main>
-        <P5Bg colors={colors}></P5Bg>
+    <P5Bg colors={colors}></P5Bg>
 
+    <main id="grain">
         <section id="top" class="overflow-hidden">
             <!-- getMonth is 0 basis!!!!! -->
             <NeoTop
@@ -101,6 +101,10 @@ const colors: simplePalette = {
 <style define:vars={ colors }>
     body{
         position: relative;
+    }
+
+    #grain{
+        background: url("/images/grain.webp") repeat;
     }
 
     main{
