@@ -36,24 +36,24 @@
     //  CONFIG
 
     // SPACING & SIZING
-    const PADDING = 20
+    const PADDING = 80
     
     const FONT_SIZE_RATIO = .01
     let fontSize = 12
     const LINE_HEIGHT = () => fontSize * 1.2
-    const PARAGARPH_MARGIN = () => fontSize * 2.5
+    const PARAGARPH_MARGIN = () => fontSize * 4
 
     // WORDS & SENTENCES
     const INITIAL_WORD = "Flow"
     const USE_INITIAL_WORD = false
     let page: string[][] = [[INITIAL_WORD]] // paragraphs, words
 
-    const MIN_WORDS_IN_PARAGRAPH = 50
-    const MAX_WORDS_IN_PARAGRAPH = 200
+    const MIN_WORDS_IN_PARAGRAPH = 250
+    const MAX_WORDS_IN_PARAGRAPH = 500
     const maxWordsInParagraph = () => MIN_WORDS_IN_PARAGRAPH + Math.floor(Math.random() * (MAX_WORDS_IN_PARAGRAPH - MIN_WORDS_IN_PARAGRAPH))
 
     // STARTUP
-    const INITIAL_SLEEP_MSEC = 1000
+    const INITIAL_SLEEP_MSEC = 400
     const startedAt = Date.now()
 
     // TYPING
@@ -61,8 +61,8 @@
     const MAX_CHARS_INTVL_MSEC = 100
     let currentTypeInterval = MIN_CHARS_INTVL_MSEC + Math.random() * (MAX_CHARS_INTVL_MSEC - MIN_CHARS_INTVL_MSEC)
 
-    const MIN_WORDS_INTVL_MSEC = 800
-    const MAX_WORDS_INTVL_MSEC = 1200
+    const MIN_WORDS_INTVL_MSEC = 800 
+    const MAX_WORDS_INTVL_MSEC = 1200 
     let currentWordInterval = MIN_WORDS_INTVL_MSEC + Math.random() * (MAX_WORDS_INTVL_MSEC - MIN_WORDS_INTVL_MSEC)
 
 
@@ -127,6 +127,16 @@
         let currentWord = ""
 
         p.draw = () => {
+            let theta = p.millis() * 0.001;
+
+            // noise waves
+            let y1 = Math.sin(theta * 0.4) * 5
+            let y2 = Math.cos(theta * 0.9) * 5
+            let y3 = Math.sin(theta * 2.9) * 2
+
+            let pace = y1 + y2 + y3 
+
+
             p.background("#FAFFF3")
 
             // performance check
@@ -208,7 +218,13 @@
             }
 
             if (!typed && now - lastCharTyped > currentTypeInterval) { // type new character if enough time elapsed
-                currentTypeInterval = p.random(MIN_CHARS_INTVL_MSEC, MAX_CHARS_INTVL_MSEC)
+                if(theta < 6){
+                    currentTypeInterval = (theta * 10 / 1)
+                    currentWordInterval = (theta * 10 / 1)
+                }else{
+                    currentTypeInterval = y2 * 5 + 60
+                    currentWordInterval = (pace + 5) * 80 + 20//p.random(MIN_WORDS_INTVL_MSEC, MAX_WORDS_INTVL_MSEC)
+                }
 
                 charIdx = Math.min(charIdx + 1, currentWord.length)
                 lastCharTyped = Date.now()
