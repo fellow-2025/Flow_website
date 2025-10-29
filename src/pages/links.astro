@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro'
-import Card from '../components/Card.astro'
+import IconCard from '../components/IconCard.astro'
 
 ---
 
@@ -14,20 +14,28 @@ import Card from '../components/Card.astro'
         <div class="inner min-h-screen h-full mx-5 xl:mx-56">
             <h1 class="m-0 flex flex-col items-center">
                 <img class="flicker w-1/2" src="/images/Flow_Logo_Large.webp" alt="FLOWのロゴ">
-                <!-- <span class="my-10">各種リンク</span> -->
             </h1>
             <div class="linkGrid grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-3">
-                <Card
+                <IconCard
+                    iconName='fa7-brands:youtube'
                     title='Flow 公式YouTubeチャンネル'
                     body='Flowの公式YouTubeチャンネルです。公開されている各回のアーカイブを閲覧できます。'
                     href='https://www.youtube.com/@fellow.flow.2025'
                 />
-                <Card
+                <IconCard
+                    iconName='fa7-brands:x-twitter'
                     title='Flow 公式Twitter'
                     body='Flowの公式Twitterです。開催情報をはじめ関連する情報を発信中！'
                     href='https://x.com/flow_fellow/'
                 />
-                <Card
+                <IconCard
+                    iconName='fa7-brands:instagram'
+                    title='Flow 公式Instagram'
+                    body='Flowの公式Instagramです。開催情報をはじめ関連する情報を発信中！'
+                    href='https://www.instagram.com/flow._.fellow/'
+                />
+                <IconCard
+                    iconName='fa7-brands:discord'
                     title='Flow 公式Discordサーバー'
                     body='Flowの公式Discordサーバーです。より細かく、Flowに関する情報を発信します！'
                     href='https://discord.gg/XCqhqjks9c'
