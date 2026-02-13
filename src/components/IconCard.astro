@@ -15,7 +15,7 @@ const { iconName, href, title, body, dark } = Astro.props;
 <div class="link-wrapper">
 	<div class="link-card" class:list={dark ? "dark" : ""}>
 		<a href={href}>
-			<div class="flex flex-row items-baseline gap-x-2 mb-3">
+			<div class="flex flex-row items-center gap-x-2 mb-3">
 				<Icon name={iconName}></Icon>
 				<h2 class="text-lg underline">
 					{title}
@@ -41,6 +41,11 @@ const { iconName, href, title, body, dark } = Astro.props;
 	
 	.link-card:hover, .link-card:active{
 		border-color: #eee;
+	}
+
+	svg{
+		width: 1.5em;
+		height: auto;
 	}
 
 	.dark{
