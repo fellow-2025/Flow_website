@@ -51,7 +51,7 @@ import MinimumLayout from '../layouts/MinimumLayout.astro';
       <div class="access-notes">
         <p class="access-title">アクセス</p>
         <p>会場は各最寄り駅から徒歩で約10分です。詳しい場所は下の地図をご確認ください。</p>
-        <img src="/sticker/place.png" alt="会場へのアクセス" class="place-map" />
+        <img src="/sticker/place.webp" alt="会場へのアクセス" class="place-map" />
         <p class="notes-title">注意事項</p>
         <p>
           会場内へのアルコールの持ち込みは禁止されています。またキャンパス内は教学施設につき一般の方は立ち入り禁止のエリアがありますので、ご注意ください。
@@ -70,6 +70,39 @@ import MinimumLayout from '../layouts/MinimumLayout.astro';
   const thanksMessage = document.getElementById('thanks-message');
   const form = document.getElementById('custom-form');
   const btn = document.getElementById('submit-btn');
+
+  async function request(data, maxRetries, timeoutMs) {
+    const RETRY_DELAY_MS = 1000;
+    let lastError = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        return;
+      } catch (error) {
+        lastError = error;
+        console.error(`Attempt ${attempt} failed:`, error);
+
+        if (attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+        }
+      }
+    }
+
+    throw new Error(`Failed after ${maxRetries} attempts: ${lastError?.message || 'Unknown error'}`);
+  }
 
   if (
     !(formWrapper instanceof HTMLElement) ||
@@ -106,12 +139,7 @@ import MinimumLayout from '../layouts/MinimumLayout.astro';
       };
 
       try {
-        await fetch(GAS_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        await request(payload, 3, 10000);
 
         const randomFlag = String(Math.floor(Math.random() * 10));
         localStorage.setItem(FORM_ID, randomFlag);
@@ -140,7 +168,7 @@ import MinimumLayout from '../layouts/MinimumLayout.astro';
     }
 
     if (cardId) {
-      const imagePath = `/sticker/${cardId}.png`;
+      const imagePath = `/sticker/${cardId}.webp`;
       cardDisplay.style.backgroundImage = `url('${imagePath}')`;
     }
   }
@@ -343,6 +371,6 @@ import MinimumLayout from '../layouts/MinimumLayout.astro';
     display: block;
     margin: clamp(0.8rem, 2.5vw, 1.4rem) auto 0;
     border-radius: 0.8rem;
-    border: 1px solid var(--pink-300);
+    /* border: 1px solid var(--pink-300); */
   }
 </style>
