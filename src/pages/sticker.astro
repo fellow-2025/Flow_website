@@ -1,0 +1,348 @@
+---
+import MinimumLayout from '../layouts/MinimumLayout.astro';
+---
+
+<MinimumLayout
+  title="Flow vol.10 Sticker Form"
+  desc="Flow vol.10 sticker distribution form"
+  favicon="/favicon.ico"
+>
+  <div class="container">
+    <div id="form-wrapper">
+      <h2>Flow vol.10 ステッカー配布フォーム</h2>
+      <p class="description">
+        事前に来場を予告された方には一人につき１枚、ステッカーをプレゼント！（イベント自体の入場は予約不要です）
+      </p>
+      <form id="custom-form">
+        <div class="field">
+          <span class="label">日程（いずれか必須 / 両方選択可）</span>
+          <div class="options">
+            <label class="option">
+              <input type="checkbox" name="schedule" value="3/14" />
+              <span class="option-text">3/14 (土)</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="schedule" value="3/15" />
+              <span class="option-text">3/15 (日)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="remark">備考（任意）</label>
+          <textarea
+            id="remark"
+            name="remark"
+            rows="4"
+            placeholder="ご自由にご記入ください"
+          ></textarea>
+        </div>
+
+        <button type="submit" id="submit-btn">送信する</button>
+      </form>
+    </div>
+
+    <div id="thanks-message" class="hidden">
+      <div class="icon">Check!</div>
+      <h2>受付完了</h2>
+      <p>回答は正常に送信されました。</p>
+      <p>スクショして、ご来場された際にスタッフにお見せください。</p>
+      <div id="card-image" class="card-display"></div>
+      <div class="access-notes">
+        <p class="access-title">アクセス</p>
+        <p>会場は各最寄り駅から徒歩で約10分です。詳しい場所は下の地図をご確認ください。</p>
+        <img src="/sticker/place.png" alt="会場へのアクセス" class="place-map" />
+        <p class="notes-title">注意事項</p>
+        <p>
+          会場内へのアルコールの持ち込みは禁止されています。またキャンパス内は教学施設につき一般の方は立ち入り禁止のエリアがありますので、ご注意ください。
+        </p>
+      </div>
+    </div>
+  </div>
+</MinimumLayout>
+
+<script type="module">
+  const FORM_ID = 'my_custom_survey_v1';
+  const GAS_URL =
+    'https://script.google.com/macros/s/AKfycbwQ4F7Mh3n0b5jTPRlTVkxj5wF7-j2KI7FFFbhNoe_ZFRdic3vNMd1QyTXqi9xHHvU/exec';
+
+  const formWrapper = document.getElementById('form-wrapper');
+  const thanksMessage = document.getElementById('thanks-message');
+  const form = document.getElementById('custom-form');
+  const btn = document.getElementById('submit-btn');
+
+  if (
+    !(formWrapper instanceof HTMLElement) ||
+    !(thanksMessage instanceof HTMLElement) ||
+    !(form instanceof HTMLFormElement) ||
+    !(btn instanceof HTMLButtonElement)
+  ) {
+    console.error('Required form elements not found.');
+  } else {
+    window.addEventListener('load', () => {
+      if (localStorage.getItem(FORM_ID)) {
+        showThanks(formWrapper, thanksMessage);
+      }
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      btn.disabled = true;
+      btn.textContent = '送信中 wait a sec...';
+
+      const formData = new FormData(form);
+      const schedules = formData.getAll('schedule').map((value) => String(value));
+      if (schedules.length === 0) {
+        alert('日程を1つ以上選択してください。');
+        btn.disabled = false;
+        btn.textContent = '送信する';
+        return;
+      }
+
+      const remarkValue = formData.get('remark');
+      const payload = {
+        schedule: schedules,
+        remark: remarkValue ? String(remarkValue) : ''
+      };
+
+      try {
+        await fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const randomFlag = String(Math.floor(Math.random() * 10));
+        localStorage.setItem(FORM_ID, randomFlag);
+        showThanks(formWrapper, thanksMessage);
+      } catch (error) {
+        console.error(error);
+        alert('エラーが発生しました。時間を置いて再度お試しください。');
+        btn.disabled = false;
+        btn.textContent = '送信する';
+      }
+    });
+  }
+
+  function showThanks(formWrapper, thanksMessage) {
+    formWrapper.classList.add('hidden');
+    thanksMessage.classList.remove('hidden');
+    displayCard();
+  }
+
+  function displayCard() {
+    const cardId = localStorage.getItem(FORM_ID);
+    const cardDisplay = document.getElementById('card-image');
+
+    if (!(cardDisplay instanceof HTMLElement)) {
+      return;
+    }
+
+    if (cardId) {
+      const imagePath = `/sticker/${cardId}.png`;
+      cardDisplay.style.backgroundImage = `url('${imagePath}')`;
+    }
+  }
+</script>
+
+<style>
+  :global(html, body) {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  :global(body) {
+    font-family: 'Avenir Next', 'Gill Sans', 'Trebuchet MS', sans-serif;
+    background: linear-gradient(160deg, var(--pink-200), #fff6f2 60%, var(--pink-100));
+    background-attachment: fixed;
+    background-size: 100% 100%;
+    color: var(--ink-900);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  :global(:root) {
+    --pink-100: #fff1f5;
+    --pink-200: #ffdce8;
+    --pink-300: #ffc4d9;
+    --ink-900: #2b2b2f;
+    --blue-500: #2b6ef3;
+    --blue-100: #e7f0ff;
+    --orange-500: #f08a2c;
+    --orange-600: #e0701f;
+  }
+
+  body{
+    padding: 30px 0;
+  }
+
+  .container {
+    background: #fff9fb;
+    padding: clamp(0.75rem, 4vw, 1.5rem);
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: min(95vw, 800px);
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid var(--pink-300);
+  }
+
+  h2 {
+    margin-top: 0;
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+    text-align: center;
+  }
+
+  .description {
+    font-size: clamp(0.75rem, 2vw, 1rem);
+    color: #6c5a66;
+    text-align: center;
+    margin-bottom: clamp(1rem, 3vw, 2rem);
+  }
+
+  .field {
+    margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  label,
+  .label {
+    display: block;
+    font-weight: normal;
+    margin-bottom: 0.5rem;
+    font-size: clamp(0.8rem, 2vw, 0.95rem);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: clamp(0.7rem, 2vw, 1rem);
+    border: 1px solid var(--pink-300);
+    border-radius: 0.6rem;
+    box-sizing: border-box;
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+    transition: border-color 0.3s;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--blue-500);
+  }
+
+  button {
+    width: 100%;
+    padding: clamp(0.85rem, 2.5vw, 1rem);
+    background-color: var(--orange-500);
+    color: #ffffff;
+    border: none;
+    border-radius: 0.6rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  button:hover {
+    background-color: var(--orange-600);
+  }
+
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .options {
+    display: grid;
+    gap: clamp(0.5rem, 2vw, 1rem);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .option {
+    display: grid;
+    margin-bottom: 0;
+  }
+
+  .option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .option-text {
+    display: block;
+    padding: clamp(1rem, 3vw, 1.5rem);
+    border: 2px solid var(--pink-300);
+    border-radius: clamp(1rem, 4vw, 1.5rem);
+    font-weight: bold;
+    font-size: clamp(0.95rem, 2.5vw, 1.3rem);
+    text-align: center;
+    background: #fff7fb;
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+  }
+
+  .option input:focus + .option-text {
+    outline: 2px solid var(--blue-500);
+    outline-offset: 2px;
+  }
+
+  .option input:checked + .option-text {
+    border-color: var(--blue-500);
+    background: var(--blue-100);
+    color: #1242a2;
+  }
+
+  @media (max-width: 520px) {
+    .options {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  #thanks-message {
+    text-align: center;
+    padding: clamp(1rem, 3vw, 2rem) 0;
+  }
+
+  .card-display {
+    width: clamp(130px, 46vw, 210px);
+    height: clamp(180px, 64vw, 300px);
+    margin: clamp(1rem, 3vw, 2rem) auto 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 0.8rem;
+  }
+
+  .access-notes {
+    margin: clamp(1rem, 3vw, 1.6rem) auto 0;
+    text-align: left;
+    max-width: 420px;
+    font-size: clamp(0.8rem, 2.2vw, 0.95rem);
+    color: #5c4a55;
+    line-height: 1.6;
+  }
+
+  .access-title,
+  .notes-title {
+    font-weight: bold;
+    color: var(--ink-900);
+    margin-top: 0.6rem;
+  }
+
+  .place-map {
+    width: min(92%, 420px);
+    height: auto;
+    display: block;
+    margin: clamp(0.8rem, 2.5vw, 1.4rem) auto 0;
+    border-radius: 0.8rem;
+    border: 1px solid var(--pink-300);
+  }
+</style>
